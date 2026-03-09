@@ -1,7 +1,5 @@
-"use client";
-
-import { useState } from "react";
-import { Save, Clock, CalendarDays, CheckCircle2, XCircle } from "lucide-react";
+import { useState, useRef } from "react";
+import { Save, Clock, CalendarDays, CheckCircle2, XCircle, Upload, Plus } from "lucide-react";
 import { useBusinessHours } from "@/lib/businessHoursStore";
 import { useSiteSettings } from "@/lib/siteSettingsStore";
 import { clsx, type ClassValue } from "clsx";
@@ -15,10 +13,23 @@ export default function SettingsPage() {
     const { settings, updateSettings } = useSiteSettings();
     const [saved, setSaved] = useState(false);
     const { hours, updateDay } = useBusinessHours();
+    const heroFileRef = useRef<HTMLInputElement>(null);
 
     const handleSave = () => {
         setSaved(true);
         setTimeout(() => setSaved(false), 2000);
+    };
+
+    const handleHeroUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const result = event.target?.result as string;
+            updateSettings({ heroImage: result });
+        };
+        reader.readAsDataURL(file);
     };
 
     return (
@@ -37,22 +48,38 @@ export default function SettingsPage() {
                     <div className="space-y-3">
                         <label className="text-[9px] uppercase tracking-[0.2em] font-black text-stone-400">Photo de la page d'accueil (Hero)</label>
                         <div className="flex gap-8 items-start">
-                            <div className="w-48 aspect-[4/5] rounded-2xl overflow-hidden border border-stone-200 shadow-lg flex-shrink-0 bg-stone-50">
-                                <img src={settings.heroImage} alt="Preview" className="w-full h-full object-cover" />
+                            <div
+                                onClick={() => heroFileRef.current?.click()}
+                                className="w-48 aspect-[4/5] rounded-2xl overflow-hidden border border-stone-200 shadow-lg flex-shrink-0 bg-stone-50 relative group cursor-pointer"
+                            >
+                                <img src={settings.heroImage} alt="Preview" className="w-full h-full object-cover transition-opacity group-hover:opacity-40" />
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Plus size={32} className="text-stone-900" />
+                                </div>
                             </div>
                             <div className="flex-1 space-y-4">
                                 <p className="text-xs text-stone-500 leading-relaxed font-light">
                                     Cette photo est la première chose que vos clientes voient. <br />
                                     Utilisez une image de haute qualité au format portrait (4:5).
                                 </p>
+
                                 <input
-                                    value={settings.heroImage}
-                                    onChange={e => updateSettings({ heroImage: e.target.value })}
-                                    placeholder="/images/hero.png"
-                                    className="w-full border border-stone-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-[#B08D57] transition-all bg-stone-50"
+                                    ref={heroFileRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleHeroUpload}
                                 />
+
+                                <button
+                                    onClick={() => heroFileRef.current?.click()}
+                                    className="flex items-center gap-2 px-6 py-3 border border-stone-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 transition-all"
+                                >
+                                    <Upload size={14} /> Télécharger une nouvelle photo
+                                </button>
+
                                 <div className="p-4 rounded-xl bg-amber-50 border border-amber-100/50">
-                                    <p className="text-[10px] text-amber-700 font-medium italic">Astuce : Si vous changez de collection ou de saison, modifiez cette URL pour rafraîchir l'accueil.</p>
+                                    <p className="text-[10px] text-amber-700 font-medium italic">Astuce : Si vous changez de collection ou de saison, changez simplement la photo pour rafraîchir l'accueil de votre site.</p>
                                 </div>
                             </div>
                         </div>
