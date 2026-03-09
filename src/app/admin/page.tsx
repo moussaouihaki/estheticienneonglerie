@@ -31,10 +31,10 @@ const upcomingAppointments = [
 ];
 
 const quickActions = [
-    { href: "/admin/calendrier", icon: CalendarIcon, label: "Voir le Calendrier", desc: "Gérer les RDV et disponibilités", color: "text-amber-500", bg: "bg-amber-50" },
-    { href: "/admin/clients", icon: Users, label: "Gestion Clients", desc: "Voir et gérer vos clientes", color: "text-violet-500", bg: "bg-violet-50" },
-    { href: "/admin/galerie", icon: Images, label: "Gérer la Galerie", desc: "Ajouter et modifier les photos", color: "text-emerald-500", bg: "bg-emerald-50" },
-    { href: "/admin/calendrier", icon: BanIcon, label: "Bloquer des Jours", desc: "Vacances et jours fériés", color: "text-red-500", bg: "bg-red-50" },
+    { href: "/admin/calendrier", image: "/images/dashboard/calendar.png", label: "Voir le Calendrier", desc: "Gérer les RDV et disponibilités" },
+    { href: "/admin/clients", image: "/images/dashboard/clients.png", label: "Gestion Clients", desc: "Voir et gérer vos clientes" },
+    { href: "/admin/galerie", image: "/images/dashboard/gallery.png", label: "Gérer la Galerie", desc: "Ajouter et modifier les photos" },
+    { href: "/admin/calendrier", image: "/images/dashboard/settings.png", label: "Bloquer des Jours", desc: "Vacances et jours fériés" },
 ];
 
 export default function AdminDashboard() {
@@ -125,8 +125,10 @@ export default function AdminDashboard() {
                                 <span className="text-xs font-bold text-stone-600 w-12">{appt.time}</span>
                                 <span className="text-sm font-bold text-stone-900 flex-1">{appt.client}</span>
                                 <span className="text-xs text-stone-400">{appt.service}</span>
-                                <button className="opacity-0 group-hover:opacity-100 p-1.5 rounded-full hover:bg-stone-100 transition-all">
-                                    <MoreVertical size={12} className="text-stone-400" />
+                                <button
+                                    className="opacity-0 group-hover:opacity-100 px-4 py-1.5 rounded-full bg-[#B08D57]/10 text-[#B08D57] text-[10px] font-black uppercase tracking-widest transition-all hover:bg-[#B08D57] hover:text-white"
+                                >
+                                    Gérer
                                 </button>
                             </div>
                         ))}
@@ -138,15 +140,16 @@ export default function AdminDashboard() {
             <div>
                 <h3 className="text-[10px] uppercase tracking-widest font-black text-stone-400 mb-5">Accès rapide</h3>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
-                    {quickActions.map(({ href, icon: Icon, label, desc, color, bg }) => (
+                    {quickActions.map(({ href, image, label, desc }) => (
                         <Link key={href + label} href={href}
-                            className="p-6 bg-white border border-stone-100 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all group"
+                            className="group relative h-48 bg-white border border-stone-100 rounded-2xl shadow-sm hover:shadow-xl transition-all overflow-hidden"
                         >
-                            <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center mb-4", bg)}>
-                                <Icon size={18} className={color} />
+                            <img src={image} className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent" />
+                            <div className="absolute bottom-6 left-6 right-6">
+                                <p className="text-sm font-bold text-white mb-1">{label}</p>
+                                <p className="text-[9px] text-stone-200 leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500">{desc}</p>
                             </div>
-                            <p className="text-sm font-bold text-stone-900 mb-1 group-hover:text-[#B08D57] transition-colors">{label}</p>
-                            <p className="text-[10px] text-stone-400 leading-relaxed">{desc}</p>
                         </Link>
                     ))}
                 </div>

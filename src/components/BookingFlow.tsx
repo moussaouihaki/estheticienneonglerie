@@ -55,9 +55,14 @@ function ServiceStep({ onSelect, selectedId }: { onSelect: (id: string) => void;
                     )}
                     style={selectedId === service.id ? { borderColor: service.color, background: service.color + "0D" } : {}}
                 >
-                    <div className="flex items-center gap-6">
-                        <div className="p-4 rounded-2xl text-2xl transition-transform group-hover:scale-110" style={{ background: service.color + "22" }}>
-                            {service.icon}
+                    <div className="flex items-center gap-8">
+                        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden relative shadow-md group-hover:shadow-xl transition-all duration-700 flex-shrink-0">
+                            <img
+                                src={service.image}
+                                alt={service.name}
+                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                            />
+                            <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl" />
                         </div>
                         <div className="text-left">
                             <h3 className="text-xl font-serif text-stone-900">{service.name}</h3>

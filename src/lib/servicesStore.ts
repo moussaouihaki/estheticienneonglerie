@@ -8,7 +8,8 @@ export type Service = {
     duration: number; // minutes
     price: number;    // CHF
     color: string;    // hex e.g. "#B08D57"
-    icon: string;     // emoji
+    icon: string;     // emoji (fallback)
+    image: string;    // Premium image path
     visible: boolean;
 };
 
@@ -22,6 +23,7 @@ const DEFAULT_SERVICES: Service[] = [
         price: 85,
         color: "#F59E0B",
         icon: "✨",
+        image: "/images/services/signature.png",
         visible: true,
     },
     {
@@ -32,6 +34,7 @@ const DEFAULT_SERVICES: Service[] = [
         price: 145,
         color: "#8B5CF6",
         icon: "💎",
+        image: "/images/services/gelx.png",
         visible: true,
     },
     {
@@ -42,6 +45,7 @@ const DEFAULT_SERVICES: Service[] = [
         price: 95,
         color: "#10B981",
         icon: "🌿",
+        image: "/images/services/spa.png",
         visible: true,
     },
 ];

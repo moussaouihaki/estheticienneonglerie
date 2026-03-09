@@ -15,12 +15,12 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const navItems = [
-    { href: "/admin", label: "Tableau de bord", icon: LayoutDashboard },
-    { href: "/admin/calendrier", label: "Calendrier", icon: Calendar },
-    { href: "/admin/services", label: "Services", icon: Scissors },
-    { href: "/admin/clients", label: "Clients", icon: Users },
-    { href: "/admin/galerie", label: "Galerie", icon: Images },
-    { href: "/admin/settings", label: "Paramètres", icon: Settings },
+    { href: "/admin", label: "Tableau de bord", slug: "01" },
+    { href: "/admin/calendrier", label: "Calendrier", slug: "02" },
+    { href: "/admin/services", label: "Services", slug: "03" },
+    { href: "/admin/clients", label: "Clients", slug: "04" },
+    { href: "/admin/galerie", label: "Galerie", slug: "05" },
+    { href: "/admin/settings", label: "Paramètres", slug: "06" },
 ];
 
 function Sidebar({ pathname }: { pathname: string }) {
@@ -36,22 +36,30 @@ function Sidebar({ pathname }: { pathname: string }) {
 
             {/* Nav */}
             <nav className="flex-1 px-4 py-8 space-y-1">
-                {navItems.map(({ href, label, icon: Icon }) => {
+                {navItems.map(({ href, label, slug }) => {
                     const active = pathname === href || (href !== "/admin" && pathname.startsWith(href));
                     return (
                         <Link
                             key={href}
                             href={href}
                             className={cn(
-                                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-sm group",
+                                "flex items-center gap-4 px-4 py-4 rounded-xl transition-all group",
                                 active
-                                    ? "bg-[#B08D57]/20 text-[#B08D57] font-bold"
-                                    : "text-stone-500 hover:text-white hover:bg-stone-900"
+                                    ? "text-[#B08D57]"
+                                    : "text-stone-500 hover:text-white"
                             )}
                         >
-                            <Icon size={16} className={active ? "text-[#B08D57]" : ""} />
-                            <span className="tracking-wide">{label}</span>
-                            {active && <ChevronRight size={12} className="ml-auto text-[#B08D57]" />}
+                            <span className={cn(
+                                "text-[10px] font-black tracking-widest transition-opacity",
+                                active ? "opacity-100" : "opacity-20 group-hover:opacity-100"
+                            )}>
+                                {slug}
+                            </span>
+                            <span className={cn(
+                                "text-xs font-bold uppercase tracking-[0.2em] transition-all",
+                                active ? "translate-x-1" : "group-hover:translate-x-1"
+                            )} stories-font-serif>{label}</span>
+                            {active && <div className="ml-auto w-1 h-1 rounded-full bg-[#B08D57]" />}
                         </Link>
                     );
                 })}

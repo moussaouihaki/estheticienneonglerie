@@ -52,12 +52,15 @@ export function Services() {
                                 style={{ background: service.color }}
                             />
 
-                            {/* Icon */}
-                            <div
-                                className="mb-8 p-4 rounded-2xl w-fit text-2xl group-hover:scale-110 transition-transform duration-500"
-                                style={{ background: service.color + "22", border: `1px solid ${service.color}40` }}
-                            >
-                                {service.icon}
+                            {/* Image Visual */}
+                            <div className="mb-10 w-full h-48 rounded-sm overflow-hidden relative shadow-2xl group-hover:shadow-accent/20 transition-all duration-700">
+                                <img
+                                    src={service.image}
+                                    alt={service.name}
+                                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
+                                />
+                                <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors duration-700" />
+                                <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
                             </div>
 
                             <div className="space-y-4 mb-10">
