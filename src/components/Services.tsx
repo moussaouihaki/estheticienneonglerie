@@ -5,8 +5,10 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Clock, CircleDollarSign } from "lucide-react";
 import { useServices } from "@/lib/servicesStore";
+import { useSiteSettings } from "@/lib/siteSettingsStore";
 
 export function Services() {
+    const { settings } = useSiteSettings();
     const { services } = useServices();
     const visibleServices = services.filter(s => s.visible);
 
@@ -98,17 +100,33 @@ export function Services() {
                 </div>
 
                 {/* Bottom visual */}
-                <div className="mt-32 w-full h-[600px] relative rounded-3xl overflow-hidden">
-                    <Image
-                        src="/images/services.png"
+                <div className="mt-32 w-full h-[600px] relative rounded-3xl overflow-hidden shadow-2xl border border-white/5">
+                    <img
+                        src={settings.servicesBannerImage}
                         alt="Luxury Space"
-                        fill
-                        className="object-cover opacity-60 scale-110 blur-sm hover:scale-100 hover:blur-none transition-all duration-[3s]"
+                        className="w-full h-full object-cover opacity-60 scale-105 hover:scale-100 transition-transform duration-[3s]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent" />
                     <div className="absolute bottom-16 left-16 space-y-4 max-w-xl">
-                        <h4 className="text-4xl md:text-6xl font-serif italic text-white leading-tight">Un sanctuaire dédié à votre <br />élégance naturelle.</h4>
+                        <motion.h4
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            className="text-4xl md:text-6xl font-serif italic text-white leading-tight"
+                        >
+                            Un sanctuaire dédié à votre <br />élégance naturelle.
+                        </motion.h4>
                     </div>
+                </div>
+
+                <div className="mt-20 flex flex-col items-center gap-6">
+                    <div className="w-px h-20 bg-gradient-to-b from-accent/50 to-transparent" />
+                    <Link
+                        href="/reservation"
+                        className="px-20 py-8 bg-white text-stone-950 text-[10px] uppercase tracking-[0.5em] font-black hover:bg-accent hover:text-white transition-all duration-700 shadow-2xl rounded-sm"
+                    >
+                        Réserver un instant de grâce
+                    </Link>
                 </div>
 
             </div>

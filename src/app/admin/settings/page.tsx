@@ -16,6 +16,7 @@ export default function SettingsPage() {
     const [saved, setSaved] = useState(false);
     const { hours, updateDay } = useBusinessHours();
     const heroFileRef = useRef<HTMLInputElement>(null);
+    const servicesFileRef = useRef<HTMLInputElement>(null);
 
     const handleSave = () => {
         setSaved(true);
@@ -34,6 +35,18 @@ export default function SettingsPage() {
         reader.readAsDataURL(file);
     };
 
+    const handleServicesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const result = event.target?.result as string;
+            updateSettings({ servicesBannerImage: result });
+        };
+        reader.readAsDataURL(file);
+    };
+
     return (
         <div className="max-w-4xl space-y-10 pb-20">
 
@@ -46,7 +59,7 @@ export default function SettingsPage() {
                     <h3 className="font-serif text-xl text-stone-900">Visuels du Site</h3>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-12">
                     <div className="space-y-3">
                         <label className="text-[9px] uppercase tracking-[0.2em] font-black text-stone-400">Photo de la page d'accueil (Hero)</label>
                         <div className="flex gap-8 items-start">
@@ -79,12 +92,48 @@ export default function SettingsPage() {
                                 >
                                     <Upload size={14} /> Télécharger une nouvelle photo
                                 </button>
-
-                                <div className="p-4 rounded-xl bg-amber-50 border border-amber-100/50">
-                                    <p className="text-[10px] text-amber-700 font-medium italic">Astuce : Si vous changez de collection ou de saison, changez simplement la photo pour rafraîchir l'accueil de votre site.</p>
-                                </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div className="space-y-3 pt-6 border-t border-stone-50">
+                        <label className="text-[9px] uppercase tracking-[0.2em] font-black text-stone-400">Bannière de la section Services</label>
+                        <div className="flex gap-8 items-start">
+                            <div
+                                onClick={() => servicesFileRef.current?.click()}
+                                className="w-72 aspect-video rounded-2xl overflow-hidden border border-stone-200 shadow-lg flex-shrink-0 bg-stone-50 relative group cursor-pointer"
+                            >
+                                <img src={settings.servicesBannerImage} alt="Preview" className="w-full h-full object-cover transition-opacity group-hover:opacity-40" />
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Plus size={32} className="text-stone-900" />
+                                </div>
+                            </div>
+                            <div className="flex-1 space-y-4">
+                                <p className="text-xs text-stone-500 leading-relaxed font-light">
+                                    Cette large photo s'affiche en bas de vos prestations. <br />
+                                    Elle renforce l'ambiance luxueuse de votre studio.
+                                </p>
+
+                                <input
+                                    ref={servicesFileRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleServicesUpload}
+                                />
+
+                                <button
+                                    onClick={() => servicesFileRef.current?.click()}
+                                    className="flex items-center gap-2 px-6 py-3 border border-stone-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 transition-all"
+                                >
+                                    <Upload size={14} /> Télécharger une nouvelle image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-amber-50 border border-amber-100/50">
+                        <p className="text-[10px] text-amber-700 font-medium italic">Astuce : Si vous changez de collection ou de saison, changez vos photos pour garder un site toujours frais et moderne.</p>
                     </div>
                 </div>
             </div>
