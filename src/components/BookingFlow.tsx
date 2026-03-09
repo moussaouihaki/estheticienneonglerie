@@ -5,9 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calendar as CalendarIcon, Clock, ChevronRight, ChevronLeft, Check, CircleDollarSign } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { useServices } from "@/lib/servicesStore";
-import { useBusinessHours, BusinessDay } from "@/lib/businessHoursStore";
 import { useBlockedPeriods } from "@/lib/blockedPeriodsStore";
+import { useSiteSettings } from "@/lib/siteSettingsStore";
+import { useServices } from "@/lib/servicesStore";
+import { useBusinessHours } from "@/lib/businessHoursStore";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -91,20 +92,28 @@ interface BookingData {
 }
 
 export function BookingFlow() {
-    const [step, setStep] = useState(1);
-    const { hours } = useBusinessHours();
+    const { settings } = useSiteSettings();
     const { services } = useServices();
+    const { hours } = useBusinessHours();
     const { isDateBlocked } = useBlockedPeriods();
-
-    const [bookingData, setBookingData] = useState<BookingData>({
-        service: null,
-        date: "", // Will be ISO "YYYY-MM-DD"
+    const [step, setStep] = useState(1);
+    const [bookingData, setBookingData] = useState({
+        service: null as string | null,
+        date: "",
         time: "",
         name: "",
         email: "",
         phone: "",
-        address: ""
+        address: "",
     });
+
+    // For demo/calendar logic
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth(); // 0-indexed
+    const nextMonthDate = new Date(currentYear, currentMonth + 1, 1);
+    const displayMonth = nextMonthDate.toLocaleString('fr-FR', { month: 'long' });
+    const displayYear = nextMonthDate.getFullYear();
 
     const nextStep = () => setStep((s) => Math.min(s + 1, 4));
     const prevStep = () => setStep((s) => Math.max(s - 1, 1));
@@ -171,21 +180,27 @@ export function BookingFlow() {
                         className="space-y-10"
                     >
                         <div className="text-center space-y-4">
-                            <h2 className="text-4xl font-serif">Sélectionnez la <span className="italic">date</span></h2>
-                            <p className="text-stone-500 font-light">Quand souhaitez-vous venir au studio ?</p>
+                            <h2 className="text-4xl font-serif">Quelle <span className="italic">date</span> ?</h2>
+                            <p className="text-stone-500 font-light uppercase tracking-widest text-xs">{displayMonth} {displayYear}</p>
                         </div>
-                        <div className="bg-white p-10 rounded-3xl shadow-2xl border border-stone-100">
-                            <div className="grid grid-cols-7 gap-4 text-center">
-                                {["Lu", "Ma", "Me", "Je", "Ve", "Sa", "Di"].map(d => (
-                                    <div key={d} className="text-[10px] uppercase tracking-widest text-stone-400 font-bold mb-4">{d}</div>
+
+                        <div className="bg-white p-8 rounded-3xl border border-stone-100 shadow-sm">
+                            <div className="grid grid-cols-7 gap-1 text-center mb-4">
+                                {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((d) => (
+                                    <div key={d} className="text-[10px] uppercase tracking-widest text-stone-400 font-black">{d}</div>
                                 ))}
-                                {[...Array(28)].map((_, i) => {
+                                {(() => {
+                                    const firstDay = new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth(), 1).getDay();
+                                    const emptySlots = firstDay === 0 ? 6 : firstDay - 1;
+                                    return [...Array(emptySlots)].map((_, i) => <div key={`empty-${i}`} />);
+                                })()}
+                                {[...Array(new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth() + 1, 0).getDate())].map((_, i) => {
                                     const dayNum = i + 1;
-                                    const dateObj = new Date(2026, 2, dayNum); // March 2026 for demo
+                                    const dateObj = new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth(), dayNum);
                                     const dayName = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"][dateObj.getDay()];
                                     const businessDay = hours.find(h => h.day === dayName);
-                                    const iso = `2026-03-${String(dayNum).padStart(2, "0")}`;
-                                    const isDisabled = !businessDay?.isOpen || dayNum < 10 || isDateBlocked(iso);
+                                    const iso = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
+                                    const isDisabled = !businessDay?.isOpen || isDateBlocked(iso);
 
                                     return (
                                         <button
@@ -318,13 +333,13 @@ export function BookingFlow() {
                                         {(() => {
                                             if (!bookingData.date) return "-";
                                             const d = new Date(bookingData.date);
-                                            return `${d.getDate()} Mars 2026 à ${bookingData.time}`;
+                                            return `${d.getDate()} ${d.toLocaleString('fr-FR', { month: 'long' })} ${d.getFullYear()} à ${bookingData.time}`;
                                         })()}
                                     </span>
                                 </div>
                             </div>
-                            <button className="w-full py-6 bg-stone-950 text-white font-bold uppercase tracking-[0.4em] rounded-xl hover:bg-accent transition-all duration-700 shadow-2xl">
-                                Confirmer ma séance
+                            <button className="w-full py-6 bg-stone-950 text-white font-bold uppercase tracking-[0.4em] rounded-xl hover:bg-[#B08D57] transition-all duration-700 shadow-2xl">
+                                Réserver chez {settings.studioName.split(' ')[0]}
                             </button>
                         </div>
                         <button onClick={prevStep} className="flex items-center gap-2 text-stone-400 hover:text-stone-900 transition-colors">

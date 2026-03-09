@@ -3,14 +3,11 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const projects = [
-    { id: 1, src: "/images/gallery-1.png", title: "Chrome Éclat", category: "Édition Limitée" },
-    { id: 2, src: "/images/gallery-2.png", title: "Nude Minimaliste", category: "Classique" },
-    { id: 3, src: "/images/gallery-3.png", title: "Marbre Précieux", category: "Art Artistique" },
-    { id: 4, src: "/images/gallery-4.png", title: "Noir Impérial", category: "Luxe" },
-];
+import { useGallery } from "@/lib/galleryStore";
 
 export function Portfolio() {
+    const { images } = useGallery();
+    const visibleImages = images.filter(img => img.visible);
     return (
         <section id="portfolio" className="py-32 px-6 bg-white">
             <div className="max-w-7xl mx-auto">
@@ -25,7 +22,7 @@ export function Portfolio() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {projects.map((project, index) => (
+                    {visibleImages.map((project, index) => (
                         <motion.div
                             key={project.id}
                             initial={{ opacity: 0, y: 20 }}
@@ -35,14 +32,14 @@ export function Portfolio() {
                             className="group relative aspect-[3/4] overflow-hidden rounded-xl bg-stone-100 cursor-pointer"
                         >
                             <Image
-                                src={project.src}
+                                src={project.url}
                                 alt={project.title}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-110"
                             />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 text-white">
                                 <span className="text-[10px] uppercase tracking-[0.2em] mb-2 block translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                                    {project.category}
+                                    {project.tag}
                                 </span>
                                 <h3 className="text-xl font-serif translate-y-4 group-hover:translate-y-0 transition-transform duration-500 delay-75">
                                     {project.title}

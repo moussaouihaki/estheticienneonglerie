@@ -10,27 +10,12 @@ function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-type GalleryImage = {
-    id: string;
-    url: string;
-    title: string;
-    tag: string;
-    visible: boolean;
-};
+import { useGallery, type GalleryImage } from "@/lib/galleryStore";
 
 const TAGS = ["Signature", "Gel-X", "Spa", "Nail Art", "French", "Saisonnière"];
 
-const INIT_IMAGES: GalleryImage[] = [
-    { id: "G1", url: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80", title: "Pose Neutre Signature", tag: "Signature", visible: true },
-    { id: "G2", url: "https://images.unsplash.com/photo-1604654894577-4d3e71a57e95?auto=format&fit=crop&w=800&q=80", title: "French Gold Art", tag: "French", visible: true },
-    { id: "G3", url: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80", title: "Gel-X Prestige Ivoire", tag: "Gel-X", visible: true },
-    { id: "G4", url: "https://images.unsplash.com/photo-1604654894577-4d3e71a57e95?auto=format&fit=crop&w=800&q=80", title: "Nail Art Floral", tag: "Nail Art", visible: true },
-    { id: "G5", url: "https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=800&q=80", title: "Spa — Soin Mains Luxe", tag: "Spa", visible: false },
-    { id: "G6", url: "https://images.unsplash.com/photo-1604654894577-4d3e71a57e95?auto=format&fit=crop&w=800&q=80", title: "Édition Noël 2025", tag: "Saisonnière", visible: true },
-];
-
 export default function GaleriePage() {
-    const [images, setImages] = useState<GalleryImage[]>(INIT_IMAGES);
+    const { images, updateGallery } = useGallery();
     const [preview, setPreview] = useState<GalleryImage | null>(null);
     const [filter, setFilter] = useState<string>("Tous");
     const [editId, setEditId] = useState<string | null>(null);
@@ -42,10 +27,10 @@ export default function GaleriePage() {
     const filtered = filter === "Tous" ? images : images.filter(i => i.tag === filter);
 
     const toggleVisible = (id: string) =>
-        setImages(prev => prev.map(i => i.id === id ? { ...i, visible: !i.visible } : i));
+        updateGallery(images.map(i => i.id === id ? { ...i, visible: !i.visible } : i));
 
     const deleteImage = (id: string) =>
-        setImages(prev => prev.filter(i => i.id !== id));
+        updateGallery(images.filter(i => i.id !== id));
 
     const startEdit = (img: GalleryImage) => {
         setEditId(img.id);
@@ -54,22 +39,31 @@ export default function GaleriePage() {
     };
 
     const saveEdit = () => {
-        setImages(prev => prev.map(i => i.id === editId ? { ...i, title: editTitle, tag: editTag } : i));
+        updateGallery(images.map(i => i.id === editId ? { ...i, title: editTitle, tag: editTag } : i));
         setEditId(null);
     };
 
     const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        const url = URL.createObjectURL(file);
-        setImages(prev => [...prev, {
-            id: `G${Date.now()}`,
-            url,
-            title: file.name.replace(/\.[^.]+$/, ""),
-            tag: "Signature",
-            visible: true,
-        }]);
+
+        // In a real app we'd upload to S3/Cloudinary. 
+        // For this demo, we'll store as base64 or blob URL (blob URL is volatile, so base64 or referencing public folder is better).
+        // Since we have generated images, let's keep it simple with blob URL for temporary persistence or just mock.
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const url = event.target?.result as string;
+            updateGallery([...images, {
+                id: `G${Date.now()}`,
+                url,
+                title: file.name.replace(/\.[^.]+$/, ""),
+                tag: "Signature",
+                visible: true,
+            }]);
+        };
+        reader.readAsDataURL(file);
     };
+
 
     return (
         <div className="space-y-8">
