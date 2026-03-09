@@ -125,24 +125,57 @@ export default function SettingsPage() {
                             </div>
 
                             {item.isOpen ? (
-                                <div className="flex items-center gap-4">
-                                    <div className="flex items-center gap-2">
-                                        <label className="text-[9px] uppercase tracking-widest text-stone-300 font-bold">De</label>
-                                        <input
-                                            type="time"
-                                            value={item.openTime}
-                                            onChange={(e) => updateDay(item.day, { openTime: e.target.value })}
-                                            className="bg-stone-50 border border-stone-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#B08D57]"
-                                        />
+                                <div className="flex items-center gap-6 flex-1 justify-end">
+                                    <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-[9px] uppercase tracking-widest text-stone-300 font-bold">De</label>
+                                            <input
+                                                type="time"
+                                                value={item.openTime}
+                                                onChange={(e) => updateDay(item.day, { openTime: e.target.value })}
+                                                className="bg-stone-50 border border-stone-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#B08D57]"
+                                            />
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <label className="text-[9px] uppercase tracking-widest text-stone-300 font-bold">À</label>
+                                            <input
+                                                type="time"
+                                                value={item.closeTime}
+                                                onChange={(e) => updateDay(item.day, { closeTime: e.target.value })}
+                                                className="bg-stone-50 border border-stone-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#B08D57]"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <label className="text-[9px] uppercase tracking-widest text-stone-300 font-bold">À</label>
-                                        <input
-                                            type="time"
-                                            value={item.closeTime}
-                                            onChange={(e) => updateDay(item.day, { closeTime: e.target.value })}
-                                            className="bg-stone-50 border border-stone-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#B08D57]"
-                                        />
+
+                                    {/* Break Section */}
+                                    <div className="flex items-center gap-4 pl-6 border-l border-stone-100">
+                                        <div className="flex items-center gap-2">
+                                            <input
+                                                type="checkbox"
+                                                id={`break-${item.day}`}
+                                                checked={item.hasBreak}
+                                                onChange={e => updateDay(item.day, { hasBreak: e.target.checked })}
+                                                className="w-3.5 h-3.5 rounded border-stone-300 text-[#B08D57] focus:ring-[#B08D57]"
+                                            />
+                                            <label htmlFor={`break-${item.day}`} className="text-[9px] uppercase tracking-widest text-stone-400 font-black cursor-pointer">Pause midi</label>
+                                        </div>
+                                        {item.hasBreak && (
+                                            <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-2 duration-300">
+                                                <input
+                                                    type="time"
+                                                    value={item.breakStart}
+                                                    onChange={(e) => updateDay(item.day, { breakStart: e.target.value })}
+                                                    className="bg-stone-50 border border-stone-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#B08D57]"
+                                                />
+                                                <span className="text-[9px] text-stone-300 uppercase font-bold">à</span>
+                                                <input
+                                                    type="time"
+                                                    value={item.breakEnd}
+                                                    onChange={(e) => updateDay(item.day, { breakEnd: e.target.value })}
+                                                    className="bg-stone-50 border border-stone-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#B08D57]"
+                                                />
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             ) : (

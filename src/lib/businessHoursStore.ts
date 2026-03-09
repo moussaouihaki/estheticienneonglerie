@@ -7,16 +7,19 @@ export type BusinessDay = {
     isOpen: boolean;
     openTime: string;  // "HH:mm"
     closeTime: string; // "HH:mm"
+    hasBreak: boolean;
+    breakStart: string; // "HH:mm"
+    breakEnd: string;   // "HH:mm"
 };
 
 const DEFAULT_HOURS: BusinessDay[] = [
-    { day: "Lundi", isOpen: true, openTime: "09:00", closeTime: "18:00" },
-    { day: "Mardi", isOpen: true, openTime: "09:00", closeTime: "18:00" },
-    { day: "Mercredi", isOpen: true, openTime: "09:00", closeTime: "18:00" },
-    { day: "Jeudi", isOpen: true, openTime: "09:00", closeTime: "18:00" },
-    { day: "Vendredi", isOpen: true, openTime: "09:00", closeTime: "18:00" },
-    { day: "Samedi", isOpen: true, openTime: "10:00", closeTime: "16:00" },
-    { day: "Dimanche", isOpen: false, openTime: "00:00", closeTime: "00:00" },
+    { day: "Lundi", isOpen: true, openTime: "09:00", closeTime: "18:00", hasBreak: true, breakStart: "12:00", breakEnd: "14:00" },
+    { day: "Mardi", isOpen: true, openTime: "09:00", closeTime: "18:00", hasBreak: true, breakStart: "12:00", breakEnd: "14:00" },
+    { day: "Mercredi", isOpen: true, openTime: "09:00", closeTime: "18:00", hasBreak: true, breakStart: "12:00", breakEnd: "14:00" },
+    { day: "Jeudi", isOpen: true, openTime: "09:00", closeTime: "18:00", hasBreak: true, breakStart: "12:00", breakEnd: "14:00" },
+    { day: "Vendredi", isOpen: true, openTime: "09:00", closeTime: "18:00", hasBreak: true, breakStart: "12:00", breakEnd: "14:00" },
+    { day: "Samedi", isOpen: true, openTime: "10:00", closeTime: "16:00", hasBreak: false, breakStart: "12:00", breakEnd: "13:00" },
+    { day: "Dimanche", isOpen: false, openTime: "00:00", closeTime: "00:00", hasBreak: false, breakStart: "00:00", breakEnd: "00:00" },
 ];
 
 const STORAGE_KEY = "aurelia_business_hours";
@@ -26,7 +29,14 @@ export function getBusinessHours(): BusinessDay[] {
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return DEFAULT_HOURS;
-        return JSON.parse(raw) as BusinessDay[];
+        const parsed = JSON.parse(raw);
+        // Ensure legacy data gets the new fields
+        return parsed.map((day: any) => ({
+            ...day,
+            hasBreak: day.hasBreak ?? false,
+            breakStart: day.breakStart ?? "12:00",
+            breakEnd: day.breakEnd ?? "14:00",
+        })) as BusinessDay[];
     } catch {
         return DEFAULT_HOURS;
     }
@@ -55,8 +65,11 @@ export function useBusinessHours() {
     };
 
     const updateDay = (dayName: string, updates: Partial<BusinessDay>) => {
-        const newHours = hours.map(h => h.day === dayName ? { ...h, ...updates } : h);
-        update(newHours);
+        setHours(prev => {
+            const next = prev.map(h => h.day === dayName ? { ...h, ...updates } : h);
+            saveBusinessHours(next);
+            return next;
+        });
     };
 
     return { hours, update, updateDay };

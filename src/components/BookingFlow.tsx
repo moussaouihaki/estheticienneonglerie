@@ -24,19 +24,33 @@ function getDayName(dateStr: string): string {
     return days[date.getDay()];
 }
 
-function generateTimeSlots(openStr: string, closeStr: string, interval = 15): string[] {
+function generateTimeSlots(openStr: string, closeStr: string, hasBreak: boolean, bStartStr: string, bEndStr: string): string[] {
     const slots: string[] = [];
     const [openH, openM] = openStr.split(":").map(Number);
     const [closeH, closeM] = closeStr.split(":").map(Number);
+    const [bStartH, bStartM] = bStartStr.split(":").map(Number);
+    const [bEndH, bEndM] = bEndStr.split(":").map(Number);
 
     let current = openH * 60 + openM;
     const end = closeH * 60 + closeM;
+    const breakStart = bStartH * 60 + bStartM;
+    const breakEnd = bEndH * 60 + bEndM;
 
-    while (current + 60 <= end) { // Simplified: assume 1h slots for now or dynamic
-        const h = Math.floor(current / 60);
-        const m = current % 60;
-        slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-        current += 75; // 1h15 steps like in original
+    while (current + 60 <= end) {
+        const slotEnd = current + 60;
+        // Check if the slot overlaps with the break
+        const isDuringBreak = hasBreak && (
+            (current >= breakStart && current < breakEnd) ||   // Start is inside break
+            (slotEnd > breakStart && slotEnd <= breakEnd) ||    // End is inside break
+            (current <= breakStart && slotEnd >= breakEnd)      // Slot engulfs break
+        );
+
+        if (!isDuringBreak) {
+            const h = Math.floor(current / 60);
+            const m = current % 60;
+            slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
+        }
+        current += 75; // Duration + cleanup time
     }
     return slots;
 }
@@ -245,7 +259,7 @@ export function BookingFlow() {
                                 const bDay = hours.find(h => h.day === dayName);
                                 if (!bDay || !bDay.isOpen) return <p className="col-span-full text-center text-stone-400">Studio fermé ce jour.</p>;
 
-                                const slots = generateTimeSlots(bDay.openTime, bDay.closeTime);
+                                const slots = generateTimeSlots(bDay.openTime, bDay.closeTime, bDay.hasBreak, bDay.breakStart, bDay.breakEnd);
                                 return slots.map(time => (
                                     <button
                                         key={time}

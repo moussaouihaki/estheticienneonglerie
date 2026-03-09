@@ -49,6 +49,7 @@ const INIT_APPTS: Appointment[] = [
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 8);
 const HOUR_H = 72;
 const DAY_NAMES = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
+const DAY_MAP_FULL = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 const MONTH_NAMES = ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"];
 
 function toISODate(d: Date) {
@@ -417,7 +418,7 @@ export default function CalendrierPage() {
 
                                         {/* Business Hours Overlays */}
                                         {(() => {
-                                            const bDay = hours.find((h: BusinessDay) => h.day === DAY_NAMES[dayIdx]);
+                                            const bDay = hours.find((h: BusinessDay) => h.day === DAY_MAP_FULL[dayIdx]);
                                             if (!bDay) return null;
 
                                             // If day is closed
@@ -452,6 +453,22 @@ export default function CalendrierPage() {
                                                             className="absolute bottom-0 left-0 right-0 bg-stone-50/70 stripe-bg z-[5] opacity-50 border-t border-stone-100"
                                                             style={{ height: eveningHeight }}
                                                         />
+                                                    )}
+
+                                                    {/* Lunch Break Overlay */}
+                                                    {bDay.hasBreak && (
+                                                        <div
+                                                            className="absolute left-0 right-0 bg-stone-100/40 stripe-bg z-[5] border-y border-stone-100/30 flex items-center justify-center overflow-hidden"
+                                                            style={{
+                                                                top: toTop(...bDay.breakStart.split(':').map(Number) as [number, number]),
+                                                                height: toHeight((Number(bDay.breakEnd.split(':')[0]) * 60 + Number(bDay.breakEnd.split(':')[1])) - (Number(bDay.breakStart.split(':')[0]) * 60 + Number(bDay.breakStart.split(':')[1])))
+                                                            }}
+                                                        >
+                                                            <div className="flex items-center gap-2 opacity-30 select-none">
+                                                                <Clock size={10} className="text-stone-400" />
+                                                                <span className="text-[7px] text-stone-500 font-black uppercase tracking-[0.2em]">Pause Déjeuner</span>
+                                                            </div>
+                                                        </div>
                                                     )}
                                                 </>
                                             );
