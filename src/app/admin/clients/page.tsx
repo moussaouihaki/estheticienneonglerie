@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Search, Phone, Mail, MoreVertical, ChevronRight, Sparkles, Scissors, Heart } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -9,7 +9,7 @@ function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-const SERVICE_ICONS: Record<string, JSX.Element> = {
+const SERVICE_ICONS: Record<string, React.ReactNode> = {
     signature: <Sparkles size={12} className="text-amber-500" />,
     gelx: <Scissors size={12} className="text-violet-500" />,
     spa: <Heart size={12} className="text-emerald-500" />,
