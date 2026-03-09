@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, X, Save, RotateCcw, Eye, EyeOff, Clock, CircleDollarSign } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Save, RotateCcw, Eye, EyeOff, Clock, CircleDollarSign, Upload } from "lucide-react";
 import { useServices, resetServices } from "@/lib/servicesStore";
 import type { Service } from "@/lib/servicesStore";
 
@@ -32,6 +32,19 @@ export default function ServicesAdminPage() {
     const [editing, setEditing] = useState<EditForm | null>(null);
     const [isNew, setIsNew] = useState(false);
     const [customColor, setCustomColor] = useState("#B08D57");
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !editing) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const result = event.target?.result as string;
+            setEditing({ ...editing, image: result });
+        };
+        reader.readAsDataURL(file);
+    };
 
     const openNew = () => {
         setEditing({ ...EMPTY_FORM });
@@ -215,16 +228,39 @@ export default function ServicesAdminPage() {
                                         </div>
                                     </div>
 
-                                    {/* Image URL */}
+                                    {/* Image Selection */}
                                     <div className="space-y-1.5">
-                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">URL de l'image (Précision Luxe)</label>
-                                        <div className="flex gap-4">
-                                            <div className="w-12 h-12 rounded-lg bg-stone-100 flex-shrink-0 overflow-hidden border border-stone-200">
-                                                <img src={editing.image} alt="" className="w-full h-full object-cover" />
+                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">Photo du service (Upload)</label>
+                                        <div className="flex gap-4 items-center">
+                                            <div className="w-20 h-20 rounded-2xl bg-stone-50 overflow-hidden border border-stone-100 flex-shrink-0 relative group">
+                                                <img src={editing.image} alt="" className="w-full h-full object-cover transition-opacity group-hover:opacity-40" />
+                                                <div
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity"
+                                                >
+                                                    <Plus size={20} className="text-stone-900" />
+                                                </div>
                                             </div>
-                                            <input value={editing.image} onChange={e => setEditing({ ...editing, image: e.target.value })}
-                                                placeholder="/images/services/..."
-                                                className="flex-1 border border-stone-200 rounded-xl px-4 py-2 text-[10px] focus:outline-none focus:border-[#B08D57]" />
+                                            <div className="flex-1 space-y-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    className="flex items-center gap-2 px-4 py-2.5 border border-stone-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 transition-all"
+                                                >
+                                                    Changer la photo
+                                                </button>
+                                                <p className="text-[9px] text-stone-400 leading-tight">
+                                                    Format recommandé: 1:1 (carré) ou 4:5. <br />
+                                                    La photo s'affichera dans le catalogue.
+                                                </p>
+                                                <input
+                                                    ref={fileInputRef}
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={handleImageUpload}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
 
