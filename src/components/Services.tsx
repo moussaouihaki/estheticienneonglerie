@@ -99,26 +99,7 @@ export function Services() {
                     ))}
                 </div>
 
-                {/* Bottom visual */}
-                <div className="mt-32 w-full h-[600px] relative rounded-3xl overflow-hidden shadow-2xl border border-white/5">
-                    <img
-                        src={settings.servicesBannerImage}
-                        alt="Luxury Space"
-                        className="w-full h-full object-cover opacity-60 scale-105 hover:scale-100 transition-transform duration-[3s]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/40 to-transparent" />
-                    <div className="absolute bottom-16 left-16 space-y-4 max-w-xl">
-                        <motion.h4
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            className="text-4xl md:text-6xl font-serif italic text-white leading-tight"
-                        >
-                            Un sanctuaire dédié à votre <br />élégance naturelle.
-                        </motion.h4>
-                    </div>
-                </div>
-
+                {/* Final CTA */}
                 <div className="mt-20 flex flex-col items-center gap-6">
                     <div className="w-px h-20 bg-gradient-to-b from-accent/50 to-transparent" />
                     <Link

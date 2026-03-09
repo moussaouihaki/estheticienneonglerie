@@ -5,7 +5,6 @@ import { useState, useEffect, useCallback } from "react";
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type SiteSettings = {
     heroImage: string;
-    servicesBannerImage: string;
     studioName: string;
     phone: string;
     email: string;
@@ -17,7 +16,6 @@ export type SiteSettings = {
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 const DEFAULT_SETTINGS: SiteSettings = {
     heroImage: "/images/hero.png",
-    servicesBannerImage: "/images/services.png",
     studioName: "Aurélia Nail Studio",
     phone: "+41 79 123 45 67",
     email: "hello@aurelianails.ch",
