@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useRef } from "react";
 import { Save, Clock, CalendarDays, CheckCircle2, XCircle, Upload, Plus } from "lucide-react";
 import { useBusinessHours } from "@/lib/businessHoursStore";
