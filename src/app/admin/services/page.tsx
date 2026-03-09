@@ -24,7 +24,7 @@ type EditForm = Omit<Service, "id"> & { id?: string };
 
 const EMPTY_FORM: EditForm = {
     name: "", description: "", duration: 60, price: 0,
-    color: "#B08D57", icon: "✨", visible: true,
+    color: "#B08D57", icon: "✨", image: "/images/services/signature.png", visible: true,
 };
 
 export default function ServicesAdminPage() {
@@ -105,9 +105,8 @@ export default function ServicesAdminPage() {
                                 {/* Icon + name */}
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-sm"
-                                            style={{ background: hexToRgba(svc.color, 0.12) }}>
-                                            {svc.icon}
+                                        <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
+                                            <img src={svc.image} alt={svc.name} className="w-full h-full object-cover" />
                                         </div>
                                         <div>
                                             <h4 className="font-bold text-stone-900 leading-tight">{svc.name}</h4>
@@ -213,6 +212,19 @@ export default function ServicesAdminPage() {
                                             <input type="number" min={0} step={5} value={editing.price}
                                                 onChange={e => setEditing({ ...editing, price: Number(e.target.value) })}
                                                 className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57]" />
+                                        </div>
+                                    </div>
+
+                                    {/* Image URL */}
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">URL de l'image (Précision Luxe)</label>
+                                        <div className="flex gap-4">
+                                            <div className="w-12 h-12 rounded-lg bg-stone-100 flex-shrink-0 overflow-hidden border border-stone-200">
+                                                <img src={editing.image} alt="" className="w-full h-full object-cover" />
+                                            </div>
+                                            <input value={editing.image} onChange={e => setEditing({ ...editing, image: e.target.value })}
+                                                placeholder="/images/services/..."
+                                                className="flex-1 border border-stone-200 rounded-xl px-4 py-2 text-[10px] focus:outline-none focus:border-[#B08D57]" />
                                         </div>
                                     </div>
 
