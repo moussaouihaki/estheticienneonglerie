@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Save, Clock, CalendarDays, CheckCircle2, XCircle } from "lucide-react";
 import { useBusinessHours } from "@/lib/businessHoursStore";
+import { useSiteSettings } from "@/lib/siteSettingsStore";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -11,12 +12,8 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export default function SettingsPage() {
-    const [studioName, setStudioName] = useState("Aurélia Nail Studio");
-    const [phone, setPhone] = useState("+41 79 123 45 67");
-    const [email, setEmail] = useState("hello@aurelianails.ch");
-    const [address, setAddress] = useState("Rue du Luxe 15, 1201 Genève");
+    const { settings, updateSettings } = useSiteSettings();
     const [saved, setSaved] = useState(false);
-
     const { hours, updateDay } = useBusinessHours();
 
     const handleSave = () => {
@@ -26,6 +23,42 @@ export default function SettingsPage() {
 
     return (
         <div className="max-w-4xl space-y-10 pb-20">
+
+            {/* Visuals & Theme */}
+            <div className="bg-white border border-stone-100 rounded-3xl shadow-sm p-10 space-y-8">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-stone-50 text-stone-400">
+                        <CalendarDays size={18} />
+                    </div>
+                    <h3 className="font-serif text-xl text-stone-900">Visuels du Site</h3>
+                </div>
+
+                <div className="space-y-6">
+                    <div className="space-y-3">
+                        <label className="text-[9px] uppercase tracking-[0.2em] font-black text-stone-400">Photo de la page d'accueil (Hero)</label>
+                        <div className="flex gap-8 items-start">
+                            <div className="w-48 aspect-[4/5] rounded-2xl overflow-hidden border border-stone-200 shadow-lg flex-shrink-0 bg-stone-50">
+                                <img src={settings.heroImage} alt="Preview" className="w-full h-full object-cover" />
+                            </div>
+                            <div className="flex-1 space-y-4">
+                                <p className="text-xs text-stone-500 leading-relaxed font-light">
+                                    Cette photo est la première chose que vos clientes voient. <br />
+                                    Utilisez une image de haute qualité au format portrait (4:5).
+                                </p>
+                                <input
+                                    value={settings.heroImage}
+                                    onChange={e => updateSettings({ heroImage: e.target.value })}
+                                    placeholder="/images/hero.png"
+                                    className="w-full border border-stone-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-[#B08D57] transition-all bg-stone-50"
+                                />
+                                <div className="p-4 rounded-xl bg-amber-50 border border-amber-100/50">
+                                    <p className="text-[10px] text-amber-700 font-medium italic">Astuce : Si vous changez de collection ou de saison, modifiez cette URL pour rafraîchir l'accueil.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {/* Studio info */}
             <div className="bg-white border border-stone-100 rounded-3xl shadow-sm p-10 space-y-8">
@@ -37,16 +70,16 @@ export default function SettingsPage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                     {[
-                        { label: "Nom du studio", value: studioName, setter: setStudioName },
-                        { label: "Téléphone", value: phone, setter: setPhone },
-                        { label: "Email de contact", value: email, setter: setEmail },
-                        { label: "Adresse", value: address, setter: setAddress },
-                    ].map(({ label, value, setter }) => (
+                        { label: "Nom du studio", key: "studioName" },
+                        { label: "Téléphone", key: "phone" },
+                        { label: "Email de contact", key: "email" },
+                        { label: "Adresse", key: "address" },
+                    ].map(({ label, key }) => (
                         <div key={label} className="space-y-1.5">
                             <label className="text-[9px] uppercase tracking-[0.2em] font-black text-stone-400">{label}</label>
                             <input
-                                value={value}
-                                onChange={e => setter(e.target.value)}
+                                value={settings[key as keyof typeof settings]}
+                                onChange={e => updateSettings({ [key]: e.target.value })}
                                 className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57] transition-all bg-white hover:border-stone-300"
                             />
                         </div>

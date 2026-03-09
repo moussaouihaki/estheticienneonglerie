@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useSiteSettings } from "@/lib/siteSettingsStore";
 
 export function Hero() {
+    const { settings } = useSiteSettings();
     const { scrollY } = useScroll();
     const y1 = useTransform(scrollY, [0, 500], [0, 200]);
     const y2 = useTransform(scrollY, [0, 500], [0, -150]);
@@ -90,12 +92,10 @@ export function Hero() {
                 {/* Visual Layer */}
                 <div className="lg:col-span-12 xl:col-span-5 relative">
                     <motion.div style={{ y: y1 }} className="relative z-20 aspect-[4/5] w-full shadow-[0_80px_150px_-30px_rgba(0,0,0,0.4)] rounded-sm overflow-hidden border-[15px] border-white group">
-                        <Image
-                            src="/images/hero.png"
+                        <img
+                            src={settings.heroImage}
                             alt="Luxe Onglerie"
-                            fill
-                            className="object-cover transition-transform duration-[5s] group-hover:scale-110"
-                            priority
+                            className="w-full h-full object-cover transition-transform duration-[5s] group-hover:scale-110"
                         />
                         {/* Glass Box Detail */}
                         <div className="absolute inset-0 border border-white/20 pointer-events-none" />
