@@ -9,6 +9,8 @@ export type SiteSettings = {
     phone: string;
     email: string;
     address: string;
+    instagram?: string;
+    tiktok?: string;
 };
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -18,6 +20,8 @@ const DEFAULT_SETTINGS: SiteSettings = {
     phone: "+41 79 123 45 67",
     email: "hello@aurelianails.ch",
     address: "Rue du Luxe 15, 1201 Genève",
+    instagram: "",
+    tiktok: "",
 };
 
 const STORAGE_KEY = "aurelia_site_settings";

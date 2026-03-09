@@ -101,12 +101,15 @@ export default function SettingsPage() {
                         { label: "Téléphone", key: "phone" },
                         { label: "Email de contact", key: "email" },
                         { label: "Adresse", key: "address" },
-                    ].map(({ label, key }) => (
+                        { label: "Lien Instagram", key: "instagram", placeholder: "https://instagram.com/..." },
+                        { label: "Lien TikTok", key: "tiktok", placeholder: "https://tiktok.com/@..." },
+                    ].map(({ label, key, placeholder }) => (
                         <div key={label} className="space-y-1.5">
                             <label className="text-[9px] uppercase tracking-[0.2em] font-black text-stone-400">{label}</label>
                             <input
-                                value={settings[key as keyof typeof settings]}
+                                value={settings[key as keyof typeof settings] || ""}
                                 onChange={e => updateSettings({ [key]: e.target.value })}
+                                placeholder={placeholder}
                                 className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57] transition-all bg-white hover:border-stone-300"
                             />
                         </div>

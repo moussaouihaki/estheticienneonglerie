@@ -87,6 +87,26 @@ export function Hero() {
                             </div>
                         </Link>
                     </motion.div>
+
+                    {/* Subtle Social Links */}
+                    {(settings.instagram || settings.tiktok) && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 1.5 }}
+                            className="flex items-center gap-8 pt-4"
+                        >
+                            <span className="text-[8px] uppercase tracking-[0.4em] text-stone-400 font-bold">Nous suivre —</span>
+                            <div className="flex items-center gap-6">
+                                {settings.instagram && (
+                                    <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="text-[9px] uppercase tracking-[0.3em] font-bold text-stone-500 hover:text-stone-950 transition-colors">Instagram</a>
+                                )}
+                                {settings.tiktok && (
+                                    <a href={settings.tiktok} target="_blank" rel="noopener noreferrer" className="text-[9px] uppercase tracking-[0.3em] font-bold text-stone-500 hover:text-stone-950 transition-colors">TikTok</a>
+                                )}
+                            </div>
+                        </motion.div>
+                    )}
                 </div>
 
                 {/* Visual Layer */}
