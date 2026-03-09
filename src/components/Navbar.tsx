@@ -70,8 +70,8 @@ export function Navbar() {
                 {/* Brand Center */}
                 <div className="flex flex-col items-center flex-1">
                     <Link href="/" className="group flex flex-col items-center">
-                        <span className="font-serif text-3xl md:text-5xl tracking-[0.2em] transition-all group-hover:tracking-[0.4em] duration-1000">
-                            AURELIA
+                        <span className="font-serif text-3xl md:text-5xl tracking-[0.2em] transition-all group-hover:tracking-[0.4em] duration-1000 uppercase">
+                            {settings.studioName.split(' ')[0]}
                         </span>
                         <div className="flex items-center gap-2 mt-1">
                             <div className="w-8 h-px bg-accent/30 group-hover:bg-accent transition-all" />

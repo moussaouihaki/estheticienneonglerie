@@ -4,14 +4,14 @@ import { NextResponse } from "next/server";
 // For now we serve the mock appointments + any blocking periods.
 
 const APPOINTMENTS = [
-    { id: "A1", client: "Marie Laurent", phone: "+41 79 123 45 67", email: "marie@email.com", service: "Signature ✨", date: "2026-03-10", startHour: 10, startMin: 0, duration: 60, status: "confirmed" },
-    { id: "A2", client: "Sophie Martin", phone: "+41 78 987 65 43", email: "sophie@email.com", service: "Gel-X 💎", date: "2026-03-10", startHour: 13, startMin: 30, duration: 120, status: "pending", notes: "Forme amande" },
-    { id: "A3", client: "Emma Dubois", phone: "+41 76 543 21 09", email: "emma@email.com", service: "Spa 🌿", date: "2026-03-11", startHour: 11, startMin: 0, duration: 75, status: "confirmed" },
-    { id: "A5", client: "Clara Fontaine", phone: "+41 77 234 56 78", email: "clara@email.com", service: "Signature ✨", date: "2026-03-12", startHour: 9, startMin: 30, duration: 60, status: "confirmed" },
-    { id: "A6", client: "Léa Bernard", phone: "+41 79 345 67 89", email: "lea@email.com", service: "Spa 🌿", date: "2026-03-12", startHour: 14, startMin: 0, duration: 75, status: "confirmed" },
-    { id: "A7", client: "Jade Moreau", phone: "+41 78 456 78 90", email: "jade@email.com", service: "Gel-X 💎", date: "2026-03-13", startHour: 10, startMin: 30, duration: 120, status: "confirmed", notes: "French milky" },
-    { id: "A8", client: "Camille Petit", phone: "+41 76 567 89 01", email: "camille@email.com", service: "Signature ✨", date: "2026-03-13", startHour: 15, startMin: 0, duration: 60, status: "pending" },
-    { id: "A9", client: "Inès Dupont", phone: "+41 77 678 90 12", email: "ines@email.com", service: "Spa 🌿", date: "2026-03-14", startHour: 11, startMin: 30, duration: 75, status: "confirmed" },
+    { id: "A1", client: "Marie Laurent", phone: "+41 79 123 45 67", email: "marie@email.com", service: "Signature ✨", date: `${new Date().getFullYear()}-03-10`, startHour: 10, startMin: 0, duration: 60, status: "confirmed" },
+    { id: "A2", client: "Sophie Martin", phone: "+41 78 987 65 43", email: "sophie@email.com", service: "Gel-X 💎", date: `${new Date().getFullYear()}-03-10`, startHour: 13, startMin: 30, duration: 120, status: "pending", notes: "Forme amande" },
+    { id: "A3", client: "Emma Dubois", phone: "+41 76 543 21 09", email: "emma@email.com", service: "Spa 🌿", date: `${new Date().getFullYear()}-03-11`, startHour: 11, startMin: 0, duration: 75, status: "confirmed" },
+    { id: "A5", client: "Clara Fontaine", phone: "+41 77 234 56 78", email: "clara@email.com", service: "Signature ✨", date: `${new Date().getFullYear()}-03-12`, startHour: 9, startMin: 30, duration: 60, status: "confirmed" },
+    { id: "A6", client: "Léa Bernard", phone: "+41 79 345 67 89", email: "lea@email.com", service: "Spa 🌿", date: `${new Date().getFullYear()}-03-12`, startHour: 14, startMin: 0, duration: 75, status: "confirmed" },
+    { id: "A7", client: "Jade Moreau", phone: "+41 78 456 78 90", email: "jade@email.com", service: "Gel-X 💎", date: `${new Date().getFullYear()}-03-13`, startHour: 10, startMin: 30, duration: 120, status: "confirmed", notes: "French milky" },
+    { id: "A8", client: "Camille Petit", phone: "+41 76 567 89 01", email: "camille@email.com", service: "Signature ✨", date: `${new Date().getFullYear()}-03-13`, startHour: 15, startMin: 0, duration: 60, status: "pending" },
+    { id: "A9", client: "Inès Dupont", phone: "+41 77 678 90 12", email: "ines@email.com", service: "Spa 🌿", date: `${new Date().getFullYear()}-03-14`, startHour: 11, startMin: 30, duration: 75, status: "confirmed" },
 ];
 
 function pad(n: number) { return String(n).padStart(2, "0"); }

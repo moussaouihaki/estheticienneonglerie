@@ -4,8 +4,10 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 
 import { useGallery } from "@/lib/galleryStore";
+import { useSiteSettings } from "@/lib/siteSettingsStore";
 
 export function Portfolio() {
+    const { settings } = useSiteSettings();
     const { images } = useGallery();
     const visibleImages = images.filter(img => img.visible);
     return (
@@ -49,13 +51,20 @@ export function Portfolio() {
                     ))}
                 </div>
 
-                <div className="mt-20 text-center">
-                    <div className="inline-block relative group cursor-pointer">
-                        <span className="text-sm font-medium uppercase tracking-[0.3em] text-stone-900 pb-2 border-b border-stone-200 group-hover:border-accent transition-colors">
-                            Suivez-nous sur Instagram @aurelianails
-                        </span>
+                {settings.instagram && (
+                    <div className="mt-20 text-center">
+                        <a
+                            href={settings.instagram}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block relative group cursor-pointer"
+                        >
+                            <span className="text-sm font-medium uppercase tracking-[0.3em] text-stone-900 pb-2 border-b border-stone-200 group-hover:border-accent transition-colors">
+                                Suivez-nous sur Instagram @{settings.instagram.split('instagram.com/')[1]?.replace(/\/$/, '') || 'aurelianails'}
+                            </span>
+                        </a>
                     </div>
-                </div>
+                )}
             </div>
         </section>
     );

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Clock, CircleDollarSign } from "lucide-react";
+import { Clock } from "lucide-react";
 import { useServices } from "@/lib/servicesStore";
 import { useSiteSettings } from "@/lib/siteSettingsStore";
 
@@ -78,7 +78,6 @@ export function Services() {
                                     </span>
                                     <div className="w-4 h-px bg-stone-700" />
                                     <span className="flex items-center gap-1.5 text-xl font-light text-stone-300">
-                                        <CircleDollarSign size={16} className="text-stone-500" />
                                         CHF {service.price}
                                     </span>
                                 </div>

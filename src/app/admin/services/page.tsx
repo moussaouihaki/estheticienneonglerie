@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, X, Save, RotateCcw, Eye, EyeOff, Clock, CircleDollarSign, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Save, RotateCcw, Eye, EyeOff, Clock, Upload } from "lucide-react";
 import { useServices, resetServices } from "@/lib/servicesStore";
 import type { Service } from "@/lib/servicesStore";
 
@@ -141,7 +141,6 @@ export default function ServicesAdminPage() {
                                         <span className="text-xs font-bold">{svc.duration} min</span>
                                     </div>
                                     <div className="flex items-center gap-1.5" style={{ color: svc.color }}>
-                                        <CircleDollarSign size={13} />
                                         <span className="text-xs font-bold">CHF {svc.price}</span>
                                     </div>
                                     <div className="ml-auto flex items-center gap-1.5">

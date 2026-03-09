@@ -43,7 +43,7 @@ export function Footer() {
 
                     <div className="flex flex-col items-center md:items-end gap-2 text-xs font-light text-stone-500 tracking-wide">
                         <div>
-                            © {currentYear} {settings.studioName}. Conçu avec <Heart size={12} className="text-accent fill-accent inline mx-1 animate-pulse" /> en Suisse.
+                            © {currentYear} {settings.studioName}. Conçu avec <Heart size={12} className="text-accent fill-accent inline mx-1 animate-pulse" /> par <a href="https://syntalys.ch" target="_blank" rel="noopener noreferrer" className="hover:text-accent underline underline-offset-4 decoration-accent/30 transition-colors">Syntalys</a> en Suisse.
                         </div>
                         <p className="text-[10px] text-stone-600 italic">Précision & Élégance à chaque pose.</p>
                         <Link

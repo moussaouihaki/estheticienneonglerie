@@ -4,13 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Lock, User, ArrowRight, Sparkles } from "lucide-react";
+import { useSiteSettings } from "@/lib/siteSettingsStore";
 
 export default function LoginPage() {
+    const { settings } = useSiteSettings();
     const [id, setId] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const currentYear = new Date().getFullYear();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,7 +47,7 @@ export default function LoginPage() {
             >
                 {/* Brand */}
                 <div className="text-center mb-12 space-y-2">
-                    <span className="font-serif text-4xl tracking-[0.3em] text-[#B08D57]">AURELIA</span>
+                    <span className="font-serif text-4xl tracking-[0.3em] text-[#B08D57] uppercase">{settings.studioName.split(' ')[0]}</span>
                     <p className="text-[10px] uppercase tracking-[0.6em] text-stone-400 font-bold">Administration de Prestige</p>
                 </div>
 
@@ -121,7 +124,7 @@ export default function LoginPage() {
                 </div>
 
                 <div className="mt-8 text-center text-[9px] text-stone-400 uppercase tracking-widest leading-relaxed">
-                    <p>© 2026 Aurelia Nail Studio</p>
+                    <p>© {currentYear} {settings.studioName}</p>
                     <p className="mt-1">Sécurité de niveau bancaire activée</p>
                 </div>
             </motion.div>

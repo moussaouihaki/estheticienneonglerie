@@ -91,7 +91,7 @@ export function AdminCalendar() {
     const [selected, setSelected] = useState<Appointment | null>(null);
     const [weekOffset, setWeekOffset] = useState(0);
 
-    const monthLabel = "Mars 2026";
+    const monthLabel = `Mars ${new Date().getFullYear()}`;
 
     return (
         <div className="flex gap-6 h-full">

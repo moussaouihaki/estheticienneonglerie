@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar as CalendarIcon, Clock, ChevronRight, ChevronLeft, Check, CircleDollarSign } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, ChevronRight, ChevronLeft, Check } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useBlockedPeriods } from "@/lib/blockedPeriodsStore";

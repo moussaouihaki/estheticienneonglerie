@@ -132,7 +132,7 @@ export function Hero() {
                         transition={{ delay: 1.5, duration: 1 }}
                         className="absolute -bottom-10 -right-10 z-30 bg-stone-950 p-10 shadow-3xl space-y-2 rounded-sm border-l-4 border-accent"
                     >
-                        <span className="block text-5xl font-serif text-accent italic">Aurelia</span>
+                        <span className="block text-5xl font-serif text-accent italic">{settings.studioName.split(' ')[0]}</span>
                         <span className="block text-[8px] uppercase tracking-[0.8em] text-stone-400 font-bold">Studio de Prestige</span>
                     </motion.div>
                 </div>

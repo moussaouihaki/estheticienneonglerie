@@ -293,7 +293,7 @@ export default function CalendrierPage() {
 
     // Compute week start (Monday)
     const weekStart = useMemo(() => {
-        const base = new Date(2026, 2, 9); // Mon March 9
+        const base = new Date(new Date().getFullYear(), 2, 9); // Mon March 9
         return addDays(base, weekOffset * 7);
     }, [weekOffset]);
 
