@@ -1,6 +1,7 @@
 "use client";
 
 import { BookingFlow } from "@/components/BookingFlow";
+import { FeaturedReviews } from "@/components/FeaturedReviews";
 import { useSiteSettings } from "@/lib/siteSettingsStore";
 import { useBusinessHours } from "@/lib/businessHoursStore";
 
@@ -25,13 +26,15 @@ export default function ReservationPage() {
             <div className="max-w-7xl mx-auto px-6 py-20 text-center">
                 <span className="text-accent text-xs font-semibold uppercase tracking-[0.4em] block mb-4">Réservation</span>
                 <h1 className="text-6xl md:text-8xl font-serif mb-8 italic">Réserver l'Expérience</h1>
-                <p className="max-w-2xl mx-auto text-stone- Stone-500 font-light leading-relaxed mb-4">
+                <p className="max-w-2xl mx-auto text-stone-500 font-light leading-relaxed mb-4">
                     Prenez rendez-vous dès maintenant pour votre prochaine séance.
                     Nous nous assurerons de vous offrir le meilleur de notre art.
                 </p>
             </div>
 
             <BookingFlow />
+
+            <FeaturedReviews />
 
             <div className="bg-stone-50 py-32 px-6">
                 <div className="max-w-5xl mx-auto text-center space-y-8">

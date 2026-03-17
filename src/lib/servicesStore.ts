@@ -1,5 +1,15 @@
 "use client";
 
+import { useState, useEffect, useCallback } from "react";
+import { db } from "./firebase";
+import { 
+    collection, 
+    onSnapshot,
+    doc,
+    setDoc,
+    query
+} from "firebase/firestore";
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type Service = {
     id: string;
@@ -15,86 +25,68 @@ export type Service = {
 
 // ─── Default services ─────────────────────────────────────────────────────────
 const DEFAULT_SERVICES: Service[] = [
-    {
-        id: "signature",
-        name: "Vise-en-beauté Signature",
-        description: "Notre manucure emblématique alliant soin, précision et élégance suisse.",
-        duration: 60,
-        price: 85,
-        color: "#F59E0B",
-        icon: "✨",
-        image: "/images/services/signature.png",
-        visible: true,
-    },
-    {
-        id: "gelx",
-        name: "Pose de prestige Gel-X",
-        description: "Extension semi-permanente ultra-légère pour des ongles parfaits et durables.",
-        duration: 120,
-        price: 145,
-        color: "#8B5CF6",
-        icon: "💎",
-        image: "/images/services/gelx.png",
-        visible: true,
-    },
-    {
-        id: "spa",
-        name: "Rituel Spa Mains & Pieds",
-        description: "Un moment de luxe absolu pour chouchouter vos mains et vos pieds.",
-        duration: 75,
-        price: 95,
-        color: "#10B981",
-        icon: "🌿",
-        image: "/images/services/spa.png",
-        visible: true,
-    },
+    { id: "gel-s", name: "GEL — Taille S", description: "Pose complète en gel. Taille S.", duration: 90, price: 75, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
+    { id: "gel-m", name: "GEL — Taille M", description: "Pose complète en gel. Taille M.", duration: 90, price: 80, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
+    { id: "gel-l", name: "GEL — Taille L", description: "Pose complète en gel. Taille L.", duration: 105, price: 85, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
+    { id: "gel-xl", name: "GEL — Taille XL", description: "Pose complète en gel. Taille XL.", duration: 120, price: 90, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
+    { id: "acrygel-s", name: "ACRYGEL — Taille S", description: "Pose complète en acrygel. Taille S.", duration: 105, price: 80, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
+    { id: "acrygel-m", name: "ACRYGEL — Taille M", description: "Pose complète en acrygel. Taille M.", duration: 105, price: 85, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
+    { id: "acrygel-l", name: "ACRYGEL — Taille L", description: "Pose complète en acrygel. Taille L.", duration: 120, price: 90, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
+    { id: "acrygel-xl", name: "ACRYGEL — Taille XL", description: "Pose complète en acrygel. Taille XL.", duration: 135, price: 95, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
+    { id: "remplissage", name: "Remplissage", description: "Entretien de votre pose, max 4 semaines.", duration: 60, price: 45, color: "#CFC4AC", icon: "💅", image: "/images/services/fill.png", visible: true },
+    { id: "nail-art", name: "Nail Art", description: "Décorations personnalisées pour vos ongles.", duration: 30, price: 5, color: "#805836", icon: "🎨", image: "/images/services/art.png", visible: true },
+    { id: "depose", name: "Dépose seul", description: "Retrait complet de la pose.", duration: 45, price: 15, color: "#000000", icon: "✂️", image: "/images/services/gel.png", visible: true }
 ];
 
-const STORAGE_KEY = "aurelia_services";
-
-// ─── Read / Write ─────────────────────────────────────────────────────────────
-export function getServices(): Service[] {
-    if (typeof window === "undefined") return DEFAULT_SERVICES;
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return DEFAULT_SERVICES;
-        return JSON.parse(raw) as Service[];
-    } catch {
-        return DEFAULT_SERVICES;
-    }
-}
-
-export function saveServices(services: Service[]): void {
-    if (typeof window === "undefined") return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(services));
-    // Dispatch a custom event so other components can react
-    window.dispatchEvent(new Event("aurelia_services_changed"));
-}
-
-export function resetServices(): void {
-    if (typeof window === "undefined") return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_SERVICES));
-    window.dispatchEvent(new Event("aurelia_services_changed"));
-}
-
-// ─── React hook ──────────────────────────────────────────────────────────────
-import { useState, useEffect, useCallback } from "react";
+const STORAGE_KEY = "palma_services";
 
 export function useServices() {
     const [services, setServices] = useState<Service[]>(DEFAULT_SERVICES);
-
-    const refresh = useCallback(() => setServices(getServices()), []);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        refresh();
-        window.addEventListener("aurelia_services_changed", refresh);
-        return () => window.removeEventListener("aurelia_services_changed", refresh);
-    }, [refresh]);
+        const q = query(collection(db, "services"));
+        const unsubscribe = onSnapshot(q, (snap) => {
+            if (snap.empty) {
+                // If cloud is empty, we don't overwrite if we already have local data, 
+                // but let's just use defaults for now if nothing exists in cloud.
+                setServices(DEFAULT_SERVICES);
+            } else {
+                const cloudServices = snap.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as Service[];
+                setServices(cloudServices);
+            }
+            setLoading(false);
+        }, (err) => {
+            console.error("Firestore services error:", err);
+            setLoading(false);
+        });
 
-    const update = (updated: Service[]) => {
-        saveServices(updated);
+        return () => unsubscribe();
+    }, []);
+
+    const update = async (updated: Service[]) => {
         setServices(updated);
+        try {
+            // Updating multiple docs (simpler here to just loop or use a batch)
+            // For simplicity in this nails studio where services are few:
+            for (const s of updated) {
+                await setDoc(doc(db, "services", s.id), s);
+            }
+        } catch (e) {
+            console.error("Error updating services:", e);
+        }
+        
+        if (typeof window !== "undefined") {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        }
     };
 
-    return { services, update };
+    const resetServices = async () => {
+        await update(DEFAULT_SERVICES);
+    };
+
+    return { services, update, resetServices, loading };
 }

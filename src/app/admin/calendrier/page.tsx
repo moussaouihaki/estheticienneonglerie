@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     ChevronLeft, ChevronRight, X, BanIcon, Sparkles,
@@ -12,38 +12,11 @@ import { twMerge } from "tailwind-merge";
 import { useServices } from "@/lib/servicesStore";
 import { useBusinessHours, BusinessDay } from "@/lib/businessHoursStore";
 import { useBlockedPeriods, BlockedPeriod } from "@/lib/blockedPeriodsStore";
+import { useAppointments } from "@/lib/appointmentsStore";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
-
-// ─── Config ───────────────────────────────────────────────────────────────────
-const SERVICE_CONFIG: Record<string, { label: string; duration: number; dot: string; hex: string; icon: string }> = {
-    signature: { label: "Signature", duration: 60, dot: "bg-amber-400", hex: "#F59E0B", icon: "✨" },
-    gelx: { label: "Gel-X", duration: 120, dot: "bg-violet-500", hex: "#8B5CF6", icon: "💎" },
-    spa: { label: "Spa", duration: 75, dot: "bg-emerald-500", hex: "#10B981", icon: "🌿" },
-};
-
-type Appointment = {
-    id: string; client: string; phone: string; email: string;
-    service: keyof typeof SERVICE_CONFIG;
-    date: string;  // ISO "YYYY-MM-DD"
-    startHour: number; startMin: number;
-    status: "confirmed" | "pending" | "cancelled"; notes?: string;
-};
-
-// ─── Mock data ─────────────────────────────────────────────────────────────────
-const INIT_APPTS: Appointment[] = [
-    { id: "A1", client: "Marie Laurent", phone: "+41 79 123 45 67", email: "marie@email.com", service: "signature", date: "2026-03-10", startHour: 10, startMin: 0, status: "confirmed" },
-    { id: "A2", client: "Sophie Martin", phone: "+41 78 987 65 43", email: "sophie@email.com", service: "gelx", date: "2026-03-10", startHour: 13, startMin: 30, status: "pending", notes: "Forme amande" },
-    { id: "A3", client: "Emma Dubois", phone: "+41 76 543 21 09", email: "emma@email.com", service: "spa", date: "2026-03-11", startHour: 11, startMin: 0, status: "confirmed" },
-    { id: "A4", client: "Alice Girard", phone: "+41 79 888 77 66", email: "alice@email.com", service: "gelx", date: "2026-03-11", startHour: 16, startMin: 0, status: "cancelled" },
-    { id: "A5", client: "Clara Fontaine", phone: "+41 77 234 56 78", email: "clara@email.com", service: "signature", date: "2026-03-12", startHour: 9, startMin: 30, status: "confirmed" },
-    { id: "A6", client: "Léa Bernard", phone: "+41 79 345 67 89", email: "lea@email.com", service: "spa", date: "2026-03-12", startHour: 14, startMin: 0, status: "confirmed" },
-    { id: "A7", client: "Jade Moreau", phone: "+41 78 456 78 90", email: "jade@email.com", service: "gelx", date: "2026-03-13", startHour: 10, startMin: 30, status: "confirmed", notes: "French milky" },
-    { id: "A8", client: "Camille Petit", phone: "+41 76 567 89 01", email: "camille@email.com", service: "signature", date: "2026-03-13", startHour: 15, startMin: 0, status: "pending" },
-    { id: "A9", client: "Inès Dupont", phone: "+41 77 678 90 12", email: "ines@email.com", service: "spa", date: "2026-03-14", startHour: 11, startMin: 30, status: "confirmed" },
-];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 8);
@@ -102,7 +75,7 @@ function BlockDialog({ onClose, onSave }: {
                     <div className="flex items-center justify-between">
                         <div>
                             <h3 className="text-2xl font-serif text-stone-900">Bloquer une période</h3>
-                            <p className="text-[10px] text-stone-400 mt-1 uppercase tracking-widest">Les clientes ne pourront pas réserver</p>
+                            <p className="text-[10px] text-stone-400 mt-1 uppercase tracking-widest">Les clients ne pourront pas réserver</p>
                         </div>
                         <button onClick={onClose} className="p-2 rounded-full hover:bg-stone-100"><X size={16} /></button>
                     </div>
@@ -113,7 +86,7 @@ function BlockDialog({ onClose, onSave }: {
                             value={label}
                             onChange={e => setLabel(e.target.value)}
                             placeholder="ex: Vacances d'été, Jour férié, Fermeture…"
-                            className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57] transition-colors"
+                            className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#CFC4AC] transition-colors"
                         />
                     </div>
 
@@ -125,7 +98,7 @@ function BlockDialog({ onClose, onSave }: {
                                 value={startDate}
                                 min={today}
                                 onChange={e => { setStart(e.target.value); if (e.target.value > endDate) setEnd(e.target.value); }}
-                                className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57] cursor-pointer"
+                                className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#CFC4AC] cursor-pointer"
                             />
                         </div>
                         <div className="space-y-2">
@@ -135,7 +108,7 @@ function BlockDialog({ onClose, onSave }: {
                                 value={endDate}
                                 min={startDate}
                                 onChange={e => setEnd(e.target.value)}
-                                className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57] cursor-pointer"
+                                className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#CFC4AC] cursor-pointer"
                             />
                         </div>
                     </div>
@@ -164,7 +137,7 @@ function BlockDialog({ onClose, onSave }: {
                                 <button key={t} onClick={() => setType(t)}
                                     className={cn(
                                         "flex-1 py-3 rounded-xl border-2 text-[10px] font-bold uppercase tracking-widest transition-all",
-                                        type === t ? "border-[#B08D57] bg-[#B08D57]/10 text-[#B08D57]" : "border-stone-100 text-stone-400 hover:border-stone-300"
+                                        type === t ? "border-[#CFC4AC] bg-[#CFC4AC]/10 text-[#CFC4AC]" : "border-stone-100 text-stone-400 hover:border-stone-300"
                                     )}>
                                     {t === "vacation" ? "🏝️ Congés" : t === "holiday" ? "🔔 Férié" : "📍 Autre"}
                                 </button>
@@ -182,7 +155,7 @@ function BlockDialog({ onClose, onSave }: {
                             onClick={() => { onSave({ label: label.trim(), startDate, endDate, type }); onClose(); }}
                             className={cn(
                                 "flex-1 py-3 text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2",
-                                valid ? "bg-stone-950 hover:bg-[#B08D57]" : "bg-stone-200 cursor-not-allowed"
+                                valid ? "bg-stone-950 hover:bg-[#CFC4AC]" : "bg-stone-200 cursor-not-allowed"
                             )}
                         >
                             <BanIcon size={12} /> Bloquer
@@ -199,8 +172,8 @@ function ICalDialog({ onClose }: { onClose: () => void }) {
     const [copiedW, setCopiedW] = useState(false);
     const [copiedG, setCopiedG] = useState(false);
     const isDev = typeof window !== "undefined" && window.location.hostname === "localhost";
-    const origin = typeof window !== "undefined" ? window.location.origin : "https://aurelianails.ch";
-    const webcalUrl = `webcal://${isDev ? "localhost:3000" : "aurelianails.ch"}/api/calendar`;
+    const origin = typeof window !== "undefined" ? window.location.origin : "https://palma-institut.ch";
+    const webcalUrl = `webcal://${isDev ? "localhost:3000" : "palma-institut.ch"}/api/calendar`;
     const httpUrl = `${origin}/api/calendar`;
     const googleUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(httpUrl)}`;
     const copy = (text: string, w: "w" | "g") => {
@@ -248,7 +221,7 @@ function ICalDialog({ onClose }: { onClose: () => void }) {
                             <div className="flex-1 bg-white/80 rounded-xl px-3 py-2 text-[9px] font-mono text-stone-400 overflow-hidden text-ellipsis whitespace-nowrap">{webcalUrl}</div>
                             <button onClick={() => copy(webcalUrl, "w")} className={cn("px-3 rounded-xl text-[9px] font-black uppercase transition-all", copiedW ? "bg-green-500 text-white" : "bg-white text-stone-600 hover:bg-stone-100")}>{copiedW ? "✓" : "Copier"}</button>
                         </div>
-                        <button onClick={() => window.open(webcalUrl, "_blank")} className="w-full py-3 bg-stone-950 hover:bg-[#B08D57] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all">
+                        <button onClick={() => window.open(webcalUrl, "_blank")} className="w-full py-3 bg-stone-950 hover:bg-[#CFC4AC] text-white rounded-xl text-xs font-bold uppercase tracking-widest transition-all">
                             Ouvrir dans Calendrier Apple →
                         </button>
                     </div>
@@ -283,13 +256,19 @@ function ICalDialog({ onClose }: { onClose: () => void }) {
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function CalendrierPage() {
-    const [appts] = useState<Appointment[]>(INIT_APPTS);
+    const { appointments, updateStatus, init } = useAppointments();
+    const { services } = useServices();
     const { hours } = useBusinessHours();
     const { blocked, addBlock, removeBlock, isDateBlocked } = useBlockedPeriods();
-    const [selected, setSelected] = useState<Appointment | null>(null);
+    const [selected, setSelected] = useState<any | null>(null);
     const [showBlock, setShowBlock] = useState(false);
     const [showIcal, setShowIcal] = useState(false);
     const [weekOffset, setWeekOffset] = useState(0);
+
+    useEffect(() => {
+        const unsubscribe = init();
+        return () => unsubscribe && unsubscribe();
+    }, [init]);
 
     // Compute week start (Monday)
     const weekStart = useMemo(() => {
@@ -323,10 +302,10 @@ export default function CalendrierPage() {
                 <div className="flex items-center gap-3">
                     {/* Legend */}
                     <div className="flex items-center gap-4 bg-white border border-stone-100 rounded-xl px-4 py-2 shadow-sm">
-                        {Object.entries(SERVICE_CONFIG).map(([k, c]) => (
-                            <div key={k} className="flex items-center gap-1.5">
-                                <span className="text-sm">{c.icon}</span>
-                                <span className="text-[9px] uppercase tracking-widest text-stone-500 font-bold">{c.label}</span>
+                        {services.filter(s => s.visible).slice(0, 3).map((s) => (
+                            <div key={s.id} className="flex items-center gap-1.5">
+                                <span className="text-sm">{s.icon}</span>
+                                <span className="text-[9px] uppercase tracking-widest text-stone-500 font-bold">{s.name.split(' ')[0]}</span>
                             </div>
                         ))}
                     </div>
@@ -342,7 +321,7 @@ export default function CalendrierPage() {
                     {/* Block */}
                     <button
                         onClick={() => setShowBlock(true)}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-stone-950 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#B08D57] transition-all shadow-sm"
+                        className="flex items-center gap-2 px-5 py-2.5 bg-stone-950 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#CFC4AC] transition-all shadow-sm"
                     >
                         <BanIcon size={14} /> Bloquer des dates
                     </button>
@@ -389,7 +368,6 @@ export default function CalendrierPage() {
                         {/* Day columns */}
                         {dayDates.map((date, dayIdx) => {
                             const isoDate = toISODate(date);
-                            const dayAppts = appts.filter(a => a.date === isoDate);
                             const isBlocked = isDateBlocked(isoDate);
                             const isWeekend = dayIdx >= 5;
                             const isToday = isoDate === toISODate(new Date());
@@ -399,12 +377,12 @@ export default function CalendrierPage() {
                                     {/* Day header */}
                                     <div className={cn(
                                         "h-14 flex flex-col items-center justify-center border-b border-stone-100 sticky top-0 z-10",
-                                        isBlocked ? "bg-red-50" : isToday ? "bg-[#B08D57]/5" : "bg-white"
+                                        isBlocked ? "bg-red-50" : isToday ? "bg-[#CFC4AC]/5" : "bg-white"
                                     )}>
                                         <span className="text-[9px] uppercase tracking-widest text-stone-400 font-black">{DAY_NAMES[dayIdx]}</span>
                                         <div className={cn(
                                             "w-7 h-7 flex items-center justify-center rounded-full mt-0.5",
-                                            isToday ? "bg-[#B08D57] text-white" : "text-stone-900"
+                                            isToday ? "bg-[#CFC4AC] text-white" : "text-stone-900"
                                         )}>
                                             <span className="text-sm font-serif">{date.getDate()}</span>
                                         </div>
@@ -485,43 +463,52 @@ export default function CalendrierPage() {
                                         )}
 
                                         {/* Appointments */}
-                                        {!isBlocked && dayAppts.map(appt => {
-                                            const cfg = SERVICE_CONFIG[appt.service];
-                                            const top = toTop(appt.startHour, appt.startMin);
-                                            const height = toHeight(cfg.duration);
-                                            const sel = selected?.id === appt.id;
+                                        {!isBlocked && appointments
+                                            .filter((a) => a.date === isoDate)
+                                            .map(appt => {
+                                                const serviceObj = services.find(s => s.id === appt.service) || services[0];
+                                                
+                                                // Convert HH:mm to hour/min
+                                                const [startH, startM] = appt.time.split(':').map(Number);
+                                                const top = toTop(startH, startM);
+                                                const height = toHeight(serviceObj?.duration || 60);
+                                                const sel = selected?.id === appt.id;
 
-                                            return (
-                                                <motion.button
-                                                    key={appt.id}
-                                                    onClick={() => setSelected(sel ? null : appt)}
-                                                    whileHover={{ scale: 1.02 }}
-                                                    whileTap={{ scale: 0.98 }}
-                                                    style={{
-                                                        top, height: height - 4, zIndex: sel ? 20 : 10,
-                                                        background: cfg.hex + "18",
-                                                        borderLeftColor: cfg.hex,
-                                                        boxShadow: sel ? `0 0 0 2px ${cfg.hex}` : undefined,
-                                                    }}
-                                                    className={cn(
-                                                        "absolute left-1 right-1 rounded-xl p-2 text-left border-l-4 transition-all duration-200",
-                                                        appt.status === "cancelled" ? "opacity-35 grayscale" : "shadow-sm hover:shadow-md"
-                                                    )}
-                                                >
-                                                    <div className="flex items-center gap-1 mb-0.5">
-                                                        <span className="text-[10px]">{cfg.icon}</span>
-                                                        <span className="text-[9px] font-black" style={{ color: cfg.hex }}>
-                                                            {appt.startHour}:{appt.startMin === 0 ? "00" : appt.startMin}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-[11px] font-bold text-stone-800 truncate">{appt.client}</p>
-                                                    {height > 55 && <p className="text-[9px] font-medium truncate mt-0.5" style={{ color: cfg.hex }}>{cfg.label}</p>}
-                                                    {height > 75 && (
-                                                        <p className="text-[9px] text-stone-400 mt-0.5">{cfg.duration} min</p>
-                                                    )}
-                                                </motion.button>
-                                            );
-                                        })}
+                                                const color = serviceObj?.color || "#B08D57";
+                                                const icon = serviceObj?.icon || "✨";
+                                                const label = serviceObj?.name || appt.service;
+
+                                                return (
+                                                    <motion.button
+                                                        key={appt.id}
+                                                        onClick={() => setSelected(sel ? null : appt)}
+                                                        whileHover={{ scale: 1.02 }}
+                                                        whileTap={{ scale: 0.98 }}
+                                                        style={{
+                                                            top, height: height - 4, zIndex: sel ? 20 : 10,
+                                                            background: color + "18",
+                                                            borderLeftColor: color,
+                                                            boxShadow: sel ? `0 0 0 2px ${color}` : undefined,
+                                                        }}
+                                                        className={cn(
+                                                            "absolute left-1 right-1 rounded-xl p-2 text-left border-l-4 transition-all duration-200",
+                                                            appt.status === "cancelled" ? "opacity-35 grayscale" : "shadow-sm hover:shadow-md"
+                                                        )}
+                                                    >
+                                                        <div className="flex items-center gap-1 mb-0.5">
+                                                            <span className="text-[10px]">{icon}</span>
+                                                            <span className="text-[9px] font-black" style={{ color: color }}>
+                                                                {appt.time}
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-[11px] font-bold text-stone-800 truncate">{appt.client}</p>
+                                                        {height > 55 && <p className="text-[9px] font-medium truncate mt-0.5" style={{ color: color }}>{label}</p>}
+                                                        {height > 75 && (
+                                                            <p className="text-[9px] text-stone-400 mt-0.5">{serviceObj?.duration} min</p>
+                                                        )}
+                                                    </motion.button>
+                                                );
+                                            })}
                                     </div>
                                 </div>
                             );
@@ -532,12 +519,13 @@ export default function CalendrierPage() {
                 {/* ─── Detail panel ──────────────────────────────────────── */}
                 <AnimatePresence>
                     {selected && (() => {
-                        const cfg = SERVICE_CONFIG[selected.service];
-                        const statusCfg = {
+                        const serviceObj = services.find(s => s.id === selected.service) || services[0];
+                        const statusMap: Record<string, any> = {
                             confirmed: { l: "Confirmé", c: "bg-green-100 text-green-700", icon: <CheckCircle2 size={12} className="text-green-500" /> },
                             pending: { l: "En attente", c: "bg-orange-100 text-orange-700", icon: <Clock size={12} className="text-orange-500" /> },
                             cancelled: { l: "Annulé", c: "bg-red-100 text-red-600", icon: <XCircle size={12} className="text-red-500" /> },
-                        }[selected.status];
+                        };
+                        const statusCfg = statusMap[selected.status] || { l: selected.status, c: "bg-stone-100", icon: <Clock size={12} /> };
 
                         return (
                             <motion.div
@@ -547,12 +535,12 @@ export default function CalendrierPage() {
                                 style={{ width: 300 }}
                             >
                                 {/* Header */}
-                                <div className="p-7 relative" style={{ background: cfg.hex + "18" }}>
+                                <div className="p-7 relative" style={{ background: (serviceObj?.color || "#B08D57") + "18" }}>
                                     <button onClick={() => setSelected(null)} className="absolute top-4 right-4 p-1.5 rounded-full bg-white/60 hover:bg-white transition-colors">
                                         <X size={13} />
                                     </button>
-                                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl mb-3" style={{ background: cfg.hex + "28" }}>
-                                        {cfg.icon}
+                                    <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl mb-3" style={{ background: (serviceObj?.color || "#B08D57") + "28" }}>
+                                        {serviceObj?.icon}
                                     </div>
                                     <h4 className="text-lg font-serif text-stone-900 mb-2">{selected.client}</h4>
                                     <div className="flex items-center gap-1.5">
@@ -564,14 +552,14 @@ export default function CalendrierPage() {
                                 {/* Body */}
                                 <div className="p-7 space-y-5 flex-1">
                                     {[
-                                        { icon: <Clock size={12} />, label: "Date & Heure", val: `${formatDateFR(selected.date)} à ${selected.startHour}:${selected.startMin === 0 ? "00" : selected.startMin}` },
-                                        { icon: <Sparkles size={12} />, label: "Service", val: `${cfg.label} · ${cfg.duration} min` },
+                                        { icon: <Clock size={12} />, label: "Date & Heure", val: `${formatDateFR(selected.date)} à ${selected.time}` },
+                                        { icon: <Sparkles size={12} />, label: "Service", val: `${serviceObj?.name || selected.service} · ${serviceObj?.duration} min` },
                                         { icon: <Phone size={12} />, label: "Téléphone", val: selected.phone },
                                         { icon: <Mail size={12} />, label: "Email", val: selected.email },
                                     ].map(({ icon, label, val }) => (
                                         <div key={label} className="flex items-start gap-3">
-                                            <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: cfg.hex + "18" }}>
-                                                <span style={{ color: cfg.hex }}>{icon}</span>
+                                            <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: (serviceObj?.color || "#B08D57") + "18" }}>
+                                                <span style={{ color: serviceObj?.color || "#B08D57" }}>{icon}</span>
                                             </div>
                                             <div className="min-w-0">
                                                 <p className="text-[9px] uppercase tracking-widest text-stone-400 font-black">{label}</p>
@@ -581,26 +569,40 @@ export default function CalendrierPage() {
                                     ))}
 
                                     {selected.notes && (
-                                        <div className="p-3 rounded-xl border text-xs italic text-stone-600" style={{ background: cfg.hex + "10", borderColor: cfg.hex + "30" }}>
+                                        <div className="p-3 rounded-xl border text-xs italic text-stone-600" style={{ background: (serviceObj?.color || "#B08D57") + "10", borderColor: (serviceObj?.color || "#B08D57") + "30" }}>
                                             💬 {selected.notes}
                                         </div>
                                     )}
                                 </div>
 
-                                {/* Actions */}
-                                <div className="px-7 pb-7 space-y-2">
-                                    {selected.status === "pending" && (
-                                        <button className="w-full py-3 bg-stone-950 text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-[#B08D57] transition-all">
-                                            <CheckCircle2 size={11} className="inline mr-1.5" /> Confirmer
-                                        </button>
-                                    )}
-                                    {selected.status !== "cancelled" && (
-                                        <button className="w-full py-3 border border-red-200 text-red-500 text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-red-50 transition-all">
-                                            <XCircle size={11} className="inline mr-1.5" /> Annuler le RDV
-                                        </button>
-                                    )}
-                                    <p className="text-center text-[9px] text-stone-300 font-mono">{selected.id}</p>
-                                </div>
+                                    {/* Actions */}
+                                    <div className="px-7 pb-7 space-y-2">
+                                        {selected.status === "pending" && (
+                                            <button 
+                                                onClick={() => {
+                                                    updateStatus(selected.id, 'confirmed');
+                                                    setSelected({ ...selected, status: 'confirmed' });
+                                                }}
+                                                className="w-full py-3 bg-stone-950 text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-[#CFC4AC] transition-all"
+                                            >
+                                                <CheckCircle2 size={11} className="inline mr-1.5" /> Confirmer
+                                            </button>
+                                        )}
+                                        {selected.status !== "cancelled" && (
+                                            <button 
+                                                onClick={() => {
+                                                    if (confirm("Annuler ce rendez-vous ?")) {
+                                                        updateStatus(selected.id, 'cancelled');
+                                                        setSelected({ ...selected, status: 'cancelled' });
+                                                    }
+                                                }}
+                                                className="w-full py-3 border border-red-200 text-red-50 text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-red-50 transition-all"
+                                            >
+                                                <XCircle size={11} className="inline mr-1.5" /> Annuler le RDV
+                                            </button>
+                                        )}
+                                        <p className="text-center text-[9px] text-stone-300 font-mono">{selected.id}</p>
+                                    </div>
                             </motion.div>
                         );
                     })()}

@@ -1,6 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { db } from "./firebase";
+import { 
+    collection, 
+    onSnapshot, 
+    doc, 
+    setDoc, 
+    deleteDoc,
+    query,
+    addDoc
+} from "firebase/firestore";
 
 export type BlockedPeriod = {
     id: string;
@@ -10,47 +20,43 @@ export type BlockedPeriod = {
     type: "vacation" | "holiday" | "other";
 };
 
-const STORAGE_KEY = "aurelia_blocked_periods";
-
-export function getBlockedPeriods(): BlockedPeriod[] {
-    if (typeof window === "undefined") return [];
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return [];
-        return JSON.parse(raw) as BlockedPeriod[];
-    } catch {
-        return [];
-    }
-}
-
-export function saveBlockedPeriods(periods: BlockedPeriod[]): void {
-    if (typeof window === "undefined") return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(periods));
-    window.dispatchEvent(new Event("aurelia_blocked_changed"));
-}
+const COLLECTION_NAME = "blocked_periods";
 
 export function useBlockedPeriods() {
     const [blocked, setBlocked] = useState<BlockedPeriod[]>([]);
-
-    const refresh = useCallback(() => setBlocked(getBlockedPeriods()), []);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        refresh();
-        window.addEventListener("aurelia_blocked_changed", refresh);
-        return () => window.removeEventListener("aurelia_blocked_changed", refresh);
-    }, [refresh]);
+        const q = query(collection(db, COLLECTION_NAME));
+        const unsubscribe = onSnapshot(q, (snap) => {
+            const cloudBlocked = snap.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            })) as BlockedPeriod[];
+            setBlocked(cloudBlocked);
+            setLoading(false);
+        }, (err) => {
+            console.error("Firestore blocked periods error:", err);
+            setLoading(false);
+        });
 
-    const addBlock = (newBlock: Omit<BlockedPeriod, "id">) => {
-        const block = { ...newBlock, id: Math.random().toString(36).substr(2, 9) };
-        const updated = [...getBlockedPeriods(), block];
-        saveBlockedPeriods(updated);
-        setBlocked(updated);
+        return () => unsubscribe();
+    }, []);
+
+    const addBlock = async (newBlock: Omit<BlockedPeriod, "id">) => {
+        try {
+            await addDoc(collection(db, COLLECTION_NAME), newBlock);
+        } catch (e) {
+            console.error("Error adding blocked period:", e);
+        }
     };
 
-    const removeBlock = (id: string) => {
-        const updated = getBlockedPeriods().filter((b) => b.id !== id);
-        saveBlockedPeriods(updated);
-        setBlocked(updated);
+    const removeBlock = async (id: string) => {
+        try {
+            await deleteDoc(doc(db, COLLECTION_NAME, id));
+        } catch (e) {
+            console.error("Error removing blocked period:", e);
+        }
     };
 
     const isDateBlocked = (dateStr: string) => {
@@ -58,9 +64,17 @@ export function useBlockedPeriods() {
         return blocked.some((b) => {
             const start = new Date(b.startDate).getTime();
             const end = new Date(b.endDate).getTime();
-            return d >= start && d <= end;
+            // Compare timestamps (ignoring time if ISO date only)
+            const dateOnly = new Date(dateStr);
+            dateOnly.setHours(0,0,0,0);
+            const startOnly = new Date(b.startDate);
+            startOnly.setHours(0,0,0,0);
+            const endOnly = new Date(b.endDate);
+            endOnly.setHours(23,59,59,999);
+            
+            return dateOnly.getTime() >= startOnly.getTime() && dateOnly.getTime() <= endOnly.getTime();
         });
     };
 
-    return { blocked, addBlock, removeBlock, isDateBlocked };
+    return { blocked, addBlock, removeBlock, isDateBlocked, loading };
 }

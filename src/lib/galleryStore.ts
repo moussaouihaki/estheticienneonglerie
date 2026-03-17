@@ -1,6 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { db } from "./firebase";
+import { 
+    collection, 
+    onSnapshot,
+    doc,
+    setDoc,
+    query
+} from "firebase/firestore";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type GalleryImage = {
@@ -13,50 +21,54 @@ export type GalleryImage = {
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 const DEFAULT_IMAGES: GalleryImage[] = [
-    { id: "G1", url: "/images/gallery-1.png", title: "Pose Neutre Signature", tag: "Signature", visible: true },
-    { id: "G2", url: "/images/gallery-2.png", title: "French Gold Art", tag: "French", visible: true },
-    { id: "G3", url: "/images/gallery-3.png", title: "Gel-X Prestige Ivoire", tag: "Gel-X", visible: true },
-    { id: "G4", url: "/images/gallery-4.png", title: "Nail Art Floral", tag: "Nail Art", visible: true },
+    { id: "G1", url: "/images/gallery-1.png", title: "Manucure Russe Signature", tag: "Soin", visible: true },
+    { id: "G2", url: "/images/gallery-2.png", title: "Nail Art Minimaliste", tag: "Art", visible: true },
+    { id: "G3", url: "/images/gallery-3.png", title: "Avant / Après - Restructuration", tag: "Transformation", visible: true },
+    { id: "G4", url: "/images/gallery-4.png", title: "Pose Gel Complète", tag: "Prestige", visible: true },
 ];
 
-const STORAGE_KEY = "aurelia_gallery";
-
-// ─── Read / Write ─────────────────────────────────────────────────────────────
-export function getGallery(): GalleryImage[] {
-    if (typeof window === "undefined") return DEFAULT_IMAGES;
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return DEFAULT_IMAGES;
-        return JSON.parse(raw) as GalleryImage[];
-    } catch {
-        return DEFAULT_IMAGES;
-    }
-}
-
-export function saveGallery(images: GalleryImage[]): void {
-    if (typeof window === "undefined") return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
-    window.dispatchEvent(new Event("aurelia_gallery_changed"));
-}
+const STORAGE_KEY = "palma_gallery";
 
 // ─── React Hook ──────────────────────────────────────────────────────────────
 export function useGallery() {
     const [images, setImages] = useState<GalleryImage[]>(DEFAULT_IMAGES);
-
-    const refresh = useCallback(() => {
-        setImages(getGallery());
-    }, []);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        refresh();
-        window.addEventListener("aurelia_gallery_changed", refresh);
-        return () => window.removeEventListener("aurelia_gallery_changed", refresh);
-    }, [refresh]);
+        const q = query(collection(db, "gallery"));
+        const unsubscribe = onSnapshot(q, (snap) => {
+            if (snap.empty) {
+                setImages(DEFAULT_IMAGES);
+            } else {
+                const cloudImages = snap.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                })) as GalleryImage[];
+                setImages(cloudImages);
+            }
+            setLoading(false);
+        }, (err) => {
+            console.error("Firestore gallery error:", err);
+            setLoading(false);
+        });
 
-    const updateGallery = (updated: GalleryImage[]) => {
-        saveGallery(updated);
+        return () => unsubscribe();
+    }, []);
+
+    const updateGallery = async (updated: GalleryImage[]) => {
         setImages(updated);
+        try {
+            for (const img of updated) {
+                await setDoc(doc(db, "gallery", img.id), img);
+            }
+        } catch (e) {
+            console.error("Error updating gallery:", e);
+        }
+        
+        if (typeof window !== "undefined") {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        }
     };
 
-    return { images, updateGallery };
+    return { images, updateGallery, loading };
 }

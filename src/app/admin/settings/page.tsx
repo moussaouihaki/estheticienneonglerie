@@ -61,7 +61,7 @@ export default function SettingsPage() {
                             </div>
                             <div className="flex-1 space-y-4">
                                 <p className="text-xs text-stone-500 leading-relaxed font-light">
-                                    Cette photo est la première chose que vos clientes voient. <br />
+                                    Cette photo est la première chose que vos clients voient. <br />
                                     Utilisez une image de haute qualité au format portrait (4:5).
                                 </p>
 

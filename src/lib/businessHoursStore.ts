@@ -1,6 +1,14 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { db } from "./firebase";
+import { 
+    doc, 
+    onSnapshot, 
+    setDoc, 
+    collection, 
+    getDocs 
+} from "firebase/firestore";
 
 export type BusinessDay = {
     day: string;
@@ -22,55 +30,46 @@ const DEFAULT_HOURS: BusinessDay[] = [
     { day: "Dimanche", isOpen: false, openTime: "00:00", closeTime: "00:00", hasBreak: false, breakStart: "00:00", breakEnd: "00:00" },
 ];
 
-const STORAGE_KEY = "aurelia_business_hours";
-
-export function getBusinessHours(): BusinessDay[] {
-    if (typeof window === "undefined") return DEFAULT_HOURS;
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return DEFAULT_HOURS;
-        const parsed = JSON.parse(raw);
-        // Ensure legacy data gets the new fields
-        return parsed.map((day: any) => ({
-            ...day,
-            hasBreak: day.hasBreak ?? false,
-            breakStart: day.breakStart ?? "12:00",
-            breakEnd: day.breakEnd ?? "14:00",
-        })) as BusinessDay[];
-    } catch {
-        return DEFAULT_HOURS;
-    }
-}
-
-export function saveBusinessHours(hours: BusinessDay[]): void {
-    if (typeof window === "undefined") return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(hours));
-    window.dispatchEvent(new Event("aurelia_business_hours_changed"));
-}
+const COLLECTION_NAME = "business_hours";
 
 export function useBusinessHours() {
     const [hours, setHours] = useState<BusinessDay[]>(DEFAULT_HOURS);
-
-    const refresh = useCallback(() => setHours(getBusinessHours()), []);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        refresh();
-        window.addEventListener("aurelia_business_hours_changed", refresh);
-        return () => window.removeEventListener("aurelia_business_hours_changed", refresh);
-    }, [refresh]);
-
-    const update = (updated: BusinessDay[]) => {
-        saveBusinessHours(updated);
-        setHours(updated);
-    };
-
-    const updateDay = (dayName: string, updates: Partial<BusinessDay>) => {
-        setHours(prev => {
-            const next = prev.map(h => h.day === dayName ? { ...h, ...updates } : h);
-            saveBusinessHours(next);
-            return next;
+        const unsubscribe = onSnapshot(collection(db, COLLECTION_NAME), (snap) => {
+            if (snap.empty) {
+                setHours(DEFAULT_HOURS);
+            } else {
+                const cloudHours = snap.docs.map(doc => doc.data() as BusinessDay);
+                // Ensure correct order
+                const sorted = DEFAULT_HOURS.map(d => cloudHours.find(ch => ch.day === d.day) || d);
+                setHours(sorted);
+            }
+            setLoading(false);
+        }, (err) => {
+            console.error("Firestore business hours error:", err);
+            setLoading(false);
         });
+
+        return () => unsubscribe();
+    }, []);
+
+    const update = async (updated: BusinessDay[]) => {
+        setHours(updated);
+        try {
+            for (const d of updated) {
+                await setDoc(doc(db, COLLECTION_NAME, d.day), d);
+            }
+        } catch (e) {
+            console.error("Error updating business hours:", e);
+        }
     };
 
-    return { hours, update, updateDay };
+    const updateDay = async (dayName: string, updates: Partial<BusinessDay>) => {
+        const updated = hours.map(h => h.day === dayName ? { ...h, ...updates } : h);
+        await update(updated);
+    };
+
+    return { hours, update, updateDay, loading };
 }

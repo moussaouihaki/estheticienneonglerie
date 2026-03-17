@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F8F5F2;
-  --foreground: #0C0C0C;
-  --accent: #B08D57;
-  --accent-light: #D4AF37;
+  --background: #FFFFFF;
+  --foreground: #000000;
+  --accent: #CFC4AC;
+  --accent-dark: #805836;
   --stone-100: #F1EBE4;
   --stone-200: #E6DDD3;
 }
@@ -13,10 +13,12 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent: var(--accent);
-  --color-accent-light: var(--accent-light);
+  --color-accent-dark: var(--accent-dark);
 
   --font-sans: var(--font-sans), ui-sans-serif, system-ui;
   --font-serif: var(--font-serif), ui-serif, Georgia;
+  --font-display: var(--font-display), ui-serif, Georgia;
+  --font-caps: var(--font-caps), ui-sans-serif, system-ui;
 }
 
 @layer base {
@@ -26,10 +28,12 @@
 
   html {
     scroll-behavior: smooth;
+    background-color: #FFFFFF;
   }
 
   body {
-    background: var(--background);
+    background-color: #FFFFFF;
+    background: #FFFFFF;
     color: var(--foreground);
     font-family: var(--font-sans);
     overflow-x: hidden;

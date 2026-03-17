@@ -23,9 +23,9 @@ export default function LoginPage() {
         // Simulating a luxury authentication delay
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        if (id === "admin" && password === "aurelia2026") {
+        if (id === "admin" && password === "palma2026") {
             // In a real app, we would set a secure cookie here
-            localStorage.setItem("aurelia_auth", "true");
+            localStorage.setItem("palma_auth", "true");
             router.push("/admin");
         } else {
             setError("Accès refusé. Veuillez vérifier vos identifiants.");
@@ -36,7 +36,7 @@ export default function LoginPage() {
     return (
         <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6 relative overflow-hidden">
             {/* Background Decor */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#B08D57]/5 rounded-full blur-[120px] -z-10 translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#CFC4AC]/5 rounded-full blur-[120px] -z-10 translate-x-1/2 -translate-y-1/2" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-stone-200/20 rounded-full blur-[100px] -z-10 -translate-x-1/2 translate-y-1/2" />
 
             <motion.div
@@ -47,13 +47,13 @@ export default function LoginPage() {
             >
                 {/* Brand */}
                 <div className="text-center mb-12 space-y-2">
-                    <span className="font-serif text-4xl tracking-[0.3em] text-[#B08D57] uppercase">{settings.studioName.split(' ')[0]}</span>
+                    <span className="font-serif text-4xl tracking-[0.3em] text-[#CFC4AC] uppercase">{settings.studioName.split(' ')[0]}</span>
                     <p className="text-[10px] uppercase tracking-[0.6em] text-stone-400 font-bold">Administration de Prestige</p>
                 </div>
 
                 <div className="bg-white border border-stone-100 rounded-3xl shadow-2xl p-10 relative overflow-hidden">
                     {/* Top bar Accent */}
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-[#B08D57]" />
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-[#CFC4AC]" />
 
                     <div className="space-y-8">
                         <div>
@@ -72,7 +72,7 @@ export default function LoginPage() {
                                             value={id}
                                             onChange={(e) => setId(e.target.value)}
                                             placeholder="admin"
-                                            className="w-full pl-12 pr-4 py-4 bg-stone-50 border border-stone-100 rounded-2xl text-sm focus:outline-none focus:border-[#B08D57] transition-all"
+                                            className="w-full pl-12 pr-4 py-4 bg-stone-50 border border-stone-100 rounded-2xl text-sm focus:outline-none focus:border-[#CFC4AC] transition-all"
                                             required
                                         />
                                     </div>
@@ -87,7 +87,7 @@ export default function LoginPage() {
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             placeholder="••••••••"
-                                            className="w-full pl-12 pr-4 py-4 bg-stone-50 border border-stone-100 rounded-2xl text-sm focus:outline-none focus:border-[#B08D57] transition-all"
+                                            className="w-full pl-12 pr-4 py-4 bg-stone-50 border border-stone-100 rounded-2xl text-sm focus:outline-none focus:border-[#CFC4AC] transition-all"
                                             required
                                         />
                                     </div>
@@ -107,7 +107,7 @@ export default function LoginPage() {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full relative group h-14 bg-stone-900 text-white rounded-2xl text-[10px] uppercase tracking-[0.4em] font-black overflow-hidden transition-all shadow-xl hover:shadow-[#B08D57]/20 disabled:opacity-50"
+                                className="w-full relative group h-14 bg-stone-900 text-white rounded-2xl text-[10px] uppercase tracking-[0.4em] font-black overflow-hidden transition-all shadow-xl hover:shadow-[#CFC4AC]/20 disabled:opacity-50"
                             >
                                 <span className={`relative z-10 flex items-center justify-center gap-3 transition-all duration-500 ${isLoading ? 'opacity-0' : 'opacity-100 group-hover:text-stone-900'}`}>
                                     Accéder au panel <ArrowRight size={14} />
@@ -117,7 +117,7 @@ export default function LoginPage() {
                                         <Sparkles className="animate-spin text-accent" size={20} />
                                     </div>
                                 )}
-                                <div className="absolute inset-0 bg-[#B08D57] translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-700 ease-[0.16, 1, 0.3, 1]" />
+                                <div className="absolute inset-0 bg-[#CFC4AC] translate-x-[-101%] group-hover:translate-x-0 transition-transform duration-700 ease-[0.16, 1, 0.3, 1]" />
                             </button>
                         </form>
                     </div>

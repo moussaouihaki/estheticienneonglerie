@@ -1,43 +1,50 @@
-"use client";
-
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Users, Calendar as CalendarIcon, Sparkles, TrendingUp, ChevronRight, Clock, MoreVertical, BanIcon, Images } from "lucide-react";
+import { Users, Calendar as CalendarIcon, Sparkles, TrendingUp, ChevronRight, Clock, MoreVertical, BanIcon, Images, MessageSquare } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { useReviews } from "@/lib/reviewsStore";
+import { useAppointments, Appointment } from "@/lib/appointmentsStore";
+import { useClients } from "@/lib/clientsStore";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-const stats = [
-    { label: "Réservations ce mois", val: "124", change: "+12.5%", icon: CalendarIcon, iconColor: "text-amber-500", bgColor: "bg-amber-50" },
-    { label: "Nouveaux Clients", val: "42", change: "+8.2%", icon: Users, iconColor: "text-violet-500", bgColor: "bg-violet-50" },
-    { label: "Prestations Actives", val: "3", change: "Stable", icon: Sparkles, iconColor: "text-emerald-500", bgColor: "bg-emerald-50" },
-    { label: "Chiffre d'Affaire", val: "CHF 12,450", change: "+4.1%", icon: TrendingUp, iconColor: "text-[#B08D57]", bgColor: "bg-[#B08D57]/10" },
-];
-
-const todayAppointments = [
-    { time: "10:00", client: "Marie Laurent", service: "Signature", duration: "60 min", color: "bg-amber-400" },
-    { time: "13:30", client: "Sophie Martin", service: "Gel-X", duration: "120 min", color: "bg-violet-500" },
-];
-
-const upcomingAppointments = [
-    { date: "Lun 10", client: "Marie Laurent", service: "Signature", time: "10:00", color: "bg-amber-400" },
-    { date: "Lun 10", client: "Sophie Martin", service: "Gel-X", time: "13:30", color: "bg-violet-500" },
-    { date: "Mar 11", client: "Emma Dubois", service: "Spa", time: "11:00", color: "bg-emerald-500" },
-    { date: "Mer 12", client: "Clara Fontaine", service: "Signature", time: "09:30", color: "bg-amber-400" },
-    { date: "Mer 12", client: "Léa Bernard", service: "Spa", time: "14:00", color: "bg-emerald-500" },
-];
-
-const quickActions = [
-    { href: "/admin/calendrier", image: "/images/dashboard/calendar.png", label: "Voir le Calendrier", desc: "Gérer les RDV et disponibilités" },
-    { href: "/admin/clients", image: "/images/dashboard/clients.png", label: "Gestion Clients", desc: "Voir et gérer vos clientes" },
-    { href: "/admin/galerie", image: "/images/dashboard/gallery.png", label: "Gérer la Galerie", desc: "Ajouter et modifier les photos" },
-    { href: "/admin/calendrier", image: "/images/dashboard/settings.png", label: "Bloquer des Jours", desc: "Vacances et jours fériés" },
-];
-
 export default function AdminDashboard() {
+    const { reviews } = useReviews();
+    const { appointments, init } = useAppointments();
+    const { clients } = useClients();
+    
+    useEffect(() => {
+        const unsubscribe = init();
+        return () => unsubscribe && unsubscribe();
+    }, [init]);
+
+    const pendingReviews = reviews.filter(r => r.status === 'pending').length;
+    const pendingAppts = appointments.filter((a: Appointment) => a.status === 'pending').length;
+
+    const stats = [
+        { label: "Réservations totales", val: appointments.length, change: "+12.5%", icon: CalendarIcon, iconColor: "text-amber-500", bgColor: "bg-amber-50" },
+        { label: "Total Clients", val: clients.length, change: clients.length > 0 ? "Base active" : "À créer", icon: Users, iconColor: "text-violet-500", bgColor: "bg-violet-50" },
+        { label: "Avis en attente", val: pendingReviews, change: pendingReviews > 0 ? "Action requise" : "À jour", icon: MessageSquare, iconColor: "text-blue-500", bgColor: "bg-blue-50" },
+        { label: "RDV en attente", val: pendingAppts, change: pendingAppts > 0 ? "À confirmer" : "À jour", icon: Sparkles, iconColor: "text-[#B08D57]", bgColor: "bg-[#B08D57]/10" },
+    ];
+
+    const quickActions = [
+        { href: "/admin/calendrier", image: "/images/dashboard/calendar.png", label: "Voir le Calendrier", desc: "Gérer les RDV et disponibilités" },
+        { href: "/admin/avis", image: "/images/dashboard/clients.png", label: "Modération Avis", desc: "Gérer les témoignages clients" },
+        { href: "/admin/galerie", image: "/images/dashboard/gallery.png", label: "Gérer la Galerie", desc: "Ajouter et modifier les photos" },
+        { href: "/admin/calendrier", image: "/images/dashboard/settings.png", label: "Bloquer des Jours", desc: "Vacances et jours fériés" },
+    ];
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const todayApptsReal = appointments.filter((a: Appointment) => a.date === todayStr && a.status !== 'cancelled');
+    const upcomingApptsReal = appointments.filter((a: Appointment) => a.date > todayStr && a.status !== 'cancelled')
+        .sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time))
+        .slice(0, 5);
+
     return (
         <div className="space-y-10">
 
@@ -59,7 +66,7 @@ export default function AdminDashboard() {
                                 </div>
                                 <span className={cn(
                                     "text-[9px] font-black px-2 py-1 rounded-full uppercase tracking-widest",
-                                    stat.change.startsWith("+") ? "bg-green-50 text-green-600" : "bg-stone-100 text-stone-400"
+                                    (stat.change === "+12.5%" || stat.change === "+8.2%" || stat.change === "+4.1%") ? "bg-green-50 text-green-600" : "bg-stone-100 text-stone-400"
                                 )}>
                                     {stat.change}
                                 </span>
@@ -90,15 +97,15 @@ export default function AdminDashboard() {
                         </Link>
                     </div>
                     <div className="p-7 space-y-4">
-                        {todayAppointments.length === 0 ? (
+                        {todayApptsReal.length === 0 ? (
                             <p className="text-sm text-stone-400 italic text-center py-8">Aucun RDV aujourd'hui</p>
-                        ) : todayAppointments.map((appt, i) => (
-                            <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-stone-50 relative overflow-hidden">
-                                <div className={cn("absolute left-0 top-0 bottom-0 w-1", appt.color)} />
+                        ) : todayApptsReal.map((appt: Appointment, i: number) => (
+                            <div key={appt.id} className="flex items-center gap-4 p-4 rounded-2xl bg-stone-50 relative overflow-hidden">
+                                <div className={cn("absolute left-0 top-0 bottom-0 w-1 bg-amber-400")} />
                                 <Clock size={14} className="text-stone-400 ml-2" />
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-bold text-stone-900 truncate">{appt.client}</p>
-                                    <p className="text-[10px] text-stone-400">{appt.service} · {appt.duration}</p>
+                                    <p className="text-[10px] text-stone-400 uppercase tracking-widest">{appt.service}</p>
                                 </div>
                                 <span className="text-xs font-bold text-stone-700">{appt.time}</span>
                             </div>
@@ -118,18 +125,23 @@ export default function AdminDashboard() {
                         </Link>
                     </div>
                     <div className="divide-y divide-stone-50">
-                        {upcomingAppointments.map((appt, i) => (
-                            <div key={i} className="px-7 py-4 flex items-center gap-4 hover:bg-stone-50 transition-colors group">
-                                <div className={cn("w-2 h-2 rounded-full flex-shrink-0", appt.color)} />
-                                <span className="text-[10px] font-black uppercase tracking-widest text-stone-400 w-14">{appt.date}</span>
+                        {upcomingApptsReal.length === 0 ? (
+                            <p className="p-10 text-center text-sm text-stone-400 italic">Aucun rendez-vous à venir</p>
+                        ) : upcomingApptsReal.map((appt: Appointment, i: number) => (
+                            <div key={appt.id} className="px-7 py-4 flex items-center gap-4 hover:bg-stone-50 transition-colors group">
+                                <div className={cn("w-2 h-2 rounded-full flex-shrink-0 bg-[#CFC4AC]")} />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-stone-400 w-24">
+                                    {new Date(appt.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                                </span>
                                 <span className="text-xs font-bold text-stone-600 w-12">{appt.time}</span>
                                 <span className="text-sm font-bold text-stone-900 flex-1">{appt.client}</span>
-                                <span className="text-xs text-stone-400">{appt.service}</span>
-                                <button
+                                <span className="text-xs text-stone-400 uppercase tracking-widest text-[9px]">{appt.service}</span>
+                                <Link
+                                    href="/admin/calendrier"
                                     className="opacity-0 group-hover:opacity-100 px-4 py-1.5 rounded-full bg-[#B08D57]/10 text-[#B08D57] text-[10px] font-black uppercase tracking-widest transition-all hover:bg-[#B08D57] hover:text-white"
                                 >
                                     Gérer
-                                </button>
+                                </Link>
                             </div>
                         ))}
                     </div>

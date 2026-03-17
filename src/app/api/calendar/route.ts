@@ -36,12 +36,12 @@ export async function GET() {
     const lines: string[] = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//Aurelia Nail Studio//FR",
+        "PRODID:-//Palma Institut//FR",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
-        "X-WR-CALNAME:Aurelia — Rendez-vous",
+        "X-WR-CALNAME:Palma Institut — Rendez-vous",
         "X-WR-TIMEZONE:Europe/Zurich",
-        "X-WR-CALDESC:Agenda Aurelia Nail Studio",
+        "X-WR-CALDESC:Agenda Palma Institut",
         "REFRESH-INTERVAL;VALUE=DURATION:PT1H",
         "X-PUBLISHED-TTL:PT1H",
     ];
@@ -51,13 +51,13 @@ export async function GET() {
 
         lines.push(
             "BEGIN:VEVENT",
-            `UID:${a.id}@aurelianails.ch`,
+            `UID:${a.id}@palma-institut.ch`,
             `DTSTAMP:${formatDT(new Date().toISOString().slice(0, 10), new Date().getHours(), new Date().getMinutes())}Z`,
             `DTSTART;TZID=Europe/Zurich:${formatDT(a.date, a.startHour, a.startMin)}`,
             `DTEND;TZID=Europe/Zurich:${addMinutes(a.date, a.startHour, a.startMin, a.duration)}`,
             `SUMMARY:${icsEscape(a.service)} ${icsEscape(a.client)}`,
             `DESCRIPTION:${icsEscape(`Tél: ${a.phone}\nEmail: ${a.email}${a.notes ? `\nNotes: ${a.notes}` : ""}`)}`,
-            `LOCATION:Aurelia Nail Studio`,
+            `LOCATION:Palma Institut`,
             `STATUS:${a.status === "confirmed" ? "CONFIRMED" : "TENTATIVE"}`,
             `BEGIN:VALARM`,
             `TRIGGER:-PT60M`,
@@ -76,7 +76,7 @@ export async function GET() {
         status: 200,
         headers: {
             "Content-Type": "text/calendar; charset=utf-8",
-            "Content-Disposition": 'inline; filename="aurelia-agenda.ics"',
+            "Content-Disposition": 'inline; filename="palma-agenda.ics"',
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Pragma": "no-cache",
         },

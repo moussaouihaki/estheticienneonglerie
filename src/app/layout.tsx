@@ -1,21 +1,32 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Noto_Serif_Display, Outfit, Josefin_Sans } from "next/font/google";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
+// "Palma Institut" + PI monogram font — as specified in notes
+const notoSerif = Noto_Serif_Display({
   variable: "--font-serif",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
-const inter = Inter({
+// Body text
+const outfit = Outfit({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+});
+
+// "Beauty Salon" font — Glacial Indifference style (geometric, clean uppercase)
+const josefinSans = Josefin_Sans({
+  variable: "--font-caps",
+  subsets: ["latin"],
+  weight: ["300", "400", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Aurelia | Nail Art de Prestige",
-  description: "L'excellence de la manucure suisse. Un studio unique pour des mains d'exception.",
+  title: "Palma Institut | Beauty Salon & Prothésie Ongulaire",
+  description: "Découvrez l'élégance et le savoir-faire de Palma Institut à La Chaux-de-Fonds. Prothésie ongulaire, gel, acrygel et nail art dans une ambiance chaleureuse.",
 };
 
 export default function RootLayout({
@@ -24,11 +35,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="scroll-smooth">
+    <html lang="fr" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${cormorant.variable} ${inter.variable} font-sans antialiased bg-stone-50 text-stone-950 selection:bg-accent selection:text-white`}
+        className={`${notoSerif.variable} ${outfit.variable} ${josefinSans.variable} font-sans antialiased bg-background text-foreground selection:bg-accent selection:text-white`}
       >
-        <div className="fixed inset-0 pointer-events-none z-[100] opacity-[0.03] mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]" />
         {children}
       </body>
     </html>

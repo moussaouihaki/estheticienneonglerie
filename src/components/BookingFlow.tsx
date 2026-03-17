@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Calendar as CalendarIcon, Clock, ChevronRight, ChevronLeft, Check } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
@@ -9,6 +9,8 @@ import { useBlockedPeriods } from "@/lib/blockedPeriodsStore";
 import { useSiteSettings } from "@/lib/siteSettingsStore";
 import { useServices } from "@/lib/servicesStore";
 import { useBusinessHours } from "@/lib/businessHoursStore";
+import { useAppointments, Appointment } from "@/lib/appointmentsStore";
+import { useClients } from "@/lib/clientsStore";
 
 function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -24,33 +26,44 @@ function getDayName(dateStr: string): string {
     return days[date.getDay()];
 }
 
-function generateTimeSlots(openStr: string, closeStr: string, hasBreak: boolean, bStartStr: string, bEndStr: string): string[] {
+function generateTimeSlots(
+    openStr: string, 
+    closeStr: string, 
+    hasBreak: boolean, 
+    bStartStr: string, 
+    bEndStr: string,
+    durationMin: number
+): string[] {
     const slots: string[] = [];
     const [openH, openM] = openStr.split(":").map(Number);
     const [closeH, closeM] = closeStr.split(":").map(Number);
     const [bStartH, bStartM] = bStartStr.split(":").map(Number);
     const [bEndH, bEndM] = bEndStr.split(":").map(Number);
 
-    let current = openH * 60 + openM;
-    const end = closeH * 60 + closeM;
-    const breakStart = bStartH * 60 + bStartM;
-    const breakEnd = bEndH * 60 + bEndM;
+    const startTotal = openH * 60 + openM;
+    const endTotal = closeH * 60 + closeM;
+    const breakStartTotal = bStartH * 60 + bStartM;
+    const breakEndTotal = bEndH * 60 + bEndM;
 
-    while (current + 60 <= end) {
-        const slotEnd = current + 60;
+    // We generate slots every 30 minutes to give choice, 
+    // but we check if the requested duration fits.
+    let current = startTotal;
+    while (current + durationMin <= endTotal) {
+        const slotEnd = current + durationMin;
+        
         // Check if the slot overlaps with the break
-        const isDuringBreak = hasBreak && (
-            (current >= breakStart && current < breakEnd) ||   // Start is inside break
-            (slotEnd > breakStart && slotEnd <= breakEnd) ||    // End is inside break
-            (current <= breakStart && slotEnd >= breakEnd)      // Slot engulfs break
+        const overlapsBreak = hasBreak && (
+            (current < breakStartTotal && slotEnd > breakStartTotal) || // Starts before, ends during/after break
+            (current >= breakStartTotal && current < breakEndTotal)    // Starts during break
         );
 
-        if (!isDuringBreak) {
+        if (!overlapsBreak) {
             const h = Math.floor(current / 60);
             const m = current % 60;
             slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
         }
-        current += 75; // Duration + cleanup time
+        
+        current += 30; // Frequency of start times
     }
     return slots;
 }
@@ -59,36 +72,34 @@ function ServiceStep({ onSelect, selectedId }: { onSelect: (id: string) => void;
     const { services } = useServices();
     const visible = services.filter(s => s.visible);
     return (
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {visible.map(service => (
                 <button
                     key={service.id}
                     onClick={() => onSelect(service.id)}
                     className={cn(
-                        "group w-full p-8 rounded-2xl border-2 flex items-center justify-between transition-all duration-500 hover:scale-[1.02]",
-                        selectedId === service.id ? "border-current bg-stone-50" : "border-stone-100 hover:border-stone-300 bg-white"
+                        "group w-full p-6 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:shadow-md",
+                        selectedId === service.id ? "border-accent bg-accent/5" : "border-stone-100 hover:border-accent/40 bg-white"
                     )}
-                    style={selectedId === service.id ? { borderColor: service.color, background: service.color + "0D" } : {}}
                 >
-                    <div className="flex items-center gap-8">
-                        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl overflow-hidden relative shadow-md group-hover:shadow-xl transition-all duration-700 flex-shrink-0">
+                    <div className="flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-xl overflow-hidden relative shadow-sm transition-all duration-700">
                             <img
                                 src={service.image}
                                 alt={service.name}
-                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                             />
-                            <div className="absolute inset-0 ring-1 ring-inset ring-black/5 rounded-2xl" />
                         </div>
                         <div className="text-left">
-                            <h3 className="text-xl font-serif text-stone-900">{service.name}</h3>
-                            <div className="flex items-center gap-2 mt-1">
-                                <span className="text-xs uppercase tracking-widest font-bold" style={{ color: service.color }}>
-                                    {service.duration} min
-                                </span>
-                            </div>
+                            <h3 className="text-sm font-serif text-stone-900 leading-tight">{service.name}</h3>
+                            <span className="text-[9px] uppercase tracking-widest font-bold text-stone-400 mt-1 block">
+                                {service.duration} min
+                            </span>
                         </div>
                     </div>
-                    <span className="text-lg font-light text-stone-900">CHF {service.price}</span>
+                    <span className="text-sm font-serif text-stone-900 border-l border-stone-100 pl-4">
+                        {service.price}.-
+                    </span>
                 </button>
             ))}
         </div>
@@ -110,6 +121,13 @@ export function BookingFlow() {
     const { services } = useServices();
     const { hours } = useBusinessHours();
     const { isDateBlocked } = useBlockedPeriods();
+    const { appointments, addAppointment, init } = useAppointments();
+    const { clients, addClient, updateClient } = useClients();
+
+    useEffect(() => {
+        const unsubscribe = init();
+        return () => unsubscribe && unsubscribe();
+    }, [init]);
     const [step, setStep] = useState(1);
     const [bookingData, setBookingData] = useState({
         service: null as string | null,
@@ -121,13 +139,15 @@ export function BookingFlow() {
         address: "",
     });
 
-    // For demo/calendar logic
     const today = new Date();
-    const currentYear = today.getFullYear();
-    const currentMonth = today.getMonth(); // 0-indexed
-    const nextMonthDate = new Date(currentYear, currentMonth + 1, 1);
-    const displayMonth = nextMonthDate.toLocaleString('fr-FR', { month: 'long' });
-    const displayYear = nextMonthDate.getFullYear();
+    const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
+    
+    const displayMonth = viewDate.toLocaleString('fr-FR', { month: 'long' });
+    const displayYear = viewDate.getFullYear();
+
+    const changeMonth = (offset: number) => {
+        setViewDate(new Date(viewDate.getFullYear(), viewDate.getMonth() + offset, 1));
+    };
 
     const nextStep = () => setStep((s) => Math.min(s + 1, 4));
     const prevStep = () => setStep((s) => Math.max(s - 1, 1));
@@ -146,6 +166,91 @@ export function BookingFlow() {
         setBookingData({ ...bookingData, time });
         nextStep();
     };
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [bookingSuccess, setBookingSuccess] = useState(false);
+
+    const handleConfirmBooking = async () => {
+        if (!bookingData.name || !bookingData.email || !bookingData.phone) {
+            alert("Veuillez remplir vos coordonnées.");
+            return;
+        }
+
+        setIsSubmitting(true);
+        
+        const service = services.find(s => s.id === bookingData.service);
+        
+        // Add appointment
+        await addAppointment({
+            client: bookingData.name,
+            email: bookingData.email,
+            phone: bookingData.phone,
+            address: bookingData.address,
+            service: bookingData.service!,
+            date: bookingData.date,
+            time: bookingData.time
+        });
+
+        // Upsert Client in Database
+        const existingClient = clients.find(c => c.email.toLowerCase() === bookingData.email.toLowerCase());
+        
+        if (existingClient) {
+            const newVisits = existingClient.visits + 1;
+            const currentTotal = parseInt(existingClient.totalSpent.replace(/[^\d]/g, '')) || 0;
+            const newTotal = currentTotal + (service?.price || 0);
+            
+            await updateClient(existingClient.id, {
+                visits: newVisits,
+                totalSpent: `CHF ${newTotal}`,
+                lastVisit: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
+                lastService: service?.id || bookingData.service!,
+                status: newVisits >= 10 ? "VIP" : (newVisits >= 3 ? "Régulier" : "Nouveau")
+            });
+        } else {
+            await addClient({
+                name: bookingData.name,
+                email: bookingData.email,
+                phone: bookingData.phone,
+                visits: 1,
+                totalSpent: `CHF ${service?.price || 0}`,
+                lastVisit: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
+                lastService: service?.id || bookingData.service!,
+                status: "Nouveau"
+            });
+        }
+
+        setIsSubmitting(false);
+        setBookingSuccess(true);
+    };
+
+    if (bookingSuccess) {
+        return (
+            <motion.div 
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="py-20 px-6 max-w-2xl mx-auto text-center space-y-8"
+            >
+                <div className="flex justify-center mb-8">
+                    <div className="w-24 h-24 bg-stone-50 rounded-full flex items-center justify-center text-accent shadow-inner">
+                        <Check size={48} />
+                    </div>
+                </div>
+                <h2 className="text-4xl md:text-6xl font-serif">Réservation <span className="italic">Confirmée</span></h2>
+                <p className="text-stone-500 font-light leading-relaxed">
+                    Merci <span className="text-stone-900 font-medium">{bookingData.name}</span>. Votre demande de rendez-vous pour le <span className="text-stone-900 font-medium">{new Date(bookingData.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}</span> à <span className="text-stone-900 font-medium">{bookingData.time}</span> a bien été enregistrée.
+                </p>
+                <div className="p-6 bg-stone-50 rounded-2xl border border-stone-100 text-xs text-stone-400 uppercase tracking-widest leading-loose">
+                    Un email de confirmation vous sera envoyé prochainement par Elisa.
+                </div>
+                <button 
+                    onClick={() => window.location.href = '/'}
+                    className="inline-block px-10 py-5 bg-stone-950 text-white font-bold uppercase tracking-widest rounded-xl hover:bg-accent transition-all duration-500"
+                >
+                    RETOURNER À L'ACCUEIL
+                </button>
+            </motion.div>
+        );
+    }
 
     return (
         <section className="py-20 px-6 max-w-4xl mx-auto min-h-[600px]">
@@ -193,9 +298,17 @@ export function BookingFlow() {
                         exit={{ opacity: 0, x: -20 }}
                         className="space-y-10"
                     >
-                        <div className="text-center space-y-4">
-                            <h2 className="text-4xl font-serif">Quelle <span className="italic">date</span> ?</h2>
-                            <p className="text-stone-500 font-light uppercase tracking-widest text-xs">{displayMonth} {displayYear}</p>
+                        <div className="flex items-center justify-between mb-8">
+                            <button onClick={() => changeMonth(-1)} className="p-2 hover:bg-stone-100 rounded-full transition-colors">
+                                <ChevronLeft size={20} />
+                            </button>
+                            <div className="text-center">
+                                <h2 className="text-4xl font-serif">Quelle <span className="italic">date</span> ?</h2>
+                                <p className="text-stone-500 font-light uppercase tracking-widest text-[10px] mt-2">{displayMonth} {displayYear}</p>
+                            </div>
+                            <button onClick={() => changeMonth(1)} className="p-2 hover:bg-stone-100 rounded-full transition-colors">
+                                <ChevronRight size={20} />
+                            </button>
                         </div>
 
                         <div className="bg-white p-8 rounded-3xl border border-stone-100 shadow-sm">
@@ -204,17 +317,24 @@ export function BookingFlow() {
                                     <div key={d} className="text-[10px] uppercase tracking-widest text-stone-400 font-black">{d}</div>
                                 ))}
                                 {(() => {
-                                    const firstDay = new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth(), 1).getDay();
+                                    const firstDay = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1).getDay();
                                     const emptySlots = firstDay === 0 ? 6 : firstDay - 1;
                                     return [...Array(emptySlots)].map((_, i) => <div key={`empty-${i}`} />);
                                 })()}
-                                {[...Array(new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth() + 1, 0).getDate())].map((_, i) => {
+                                {[...Array(new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 0).getDate())].map((_, i) => {
                                     const dayNum = i + 1;
-                                    const dateObj = new Date(nextMonthDate.getFullYear(), nextMonthDate.getMonth(), dayNum);
+                                    const dateObj = new Date(viewDate.getFullYear(), viewDate.getMonth(), dayNum);
+                                    
+                                    // Reset today time for comparison
+                                    const todayCheck = new Date();
+                                    todayCheck.setHours(0, 0, 0, 0);
+                                    
                                     const dayName = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"][dateObj.getDay()];
                                     const businessDay = hours.find(h => h.day === dayName);
                                     const iso = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
-                                    const isDisabled = !businessDay?.isOpen || isDateBlocked(iso);
+                                    
+                                    const isPast = dateObj < todayCheck;
+                                    const isDisabled = isPast || !businessDay?.isOpen || isDateBlocked(iso);
 
                                     return (
                                         <button
@@ -250,7 +370,11 @@ export function BookingFlow() {
                     >
                         <div className="text-center space-y-4">
                             <h2 className="text-4xl font-serif">Choisissez l'<span className="italic">heure</span></h2>
-                            <p className="text-stone-500 font-light">Date sélectionnée : <span className="text-accent font-medium">{bookingData.date}</span></p>
+                            <p className="text-stone-500 font-light">
+                                Date sélectionnée : <span className="text-accent font-medium">
+                                    {bookingData.date ? new Date(bookingData.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : ""}
+                                </span>
+                            </p>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {(() => {
@@ -259,8 +383,40 @@ export function BookingFlow() {
                                 const bDay = hours.find(h => h.day === dayName);
                                 if (!bDay || !bDay.isOpen) return <p className="col-span-full text-center text-stone-400">Studio fermé ce jour.</p>;
 
-                                const slots = generateTimeSlots(bDay.openTime, bDay.closeTime, bDay.hasBreak, bDay.breakStart, bDay.breakEnd);
-                                return slots.map(time => (
+                                const serviceDuration = services.find(s => s.id === bookingData.service)?.duration || 60;
+                                const slots = generateTimeSlots(
+                                    bDay.openTime, 
+                                    bDay.closeTime, 
+                                    bDay.hasBreak, 
+                                    bDay.breakStart, 
+                                    bDay.breakEnd,
+                                    serviceDuration
+                                );
+                                
+                                // NEW: Filter slots that are already taken
+                                const takenAppts = appointments.filter(a => a.date === bookingData.date && a.status !== 'cancelled');
+                                
+                                const availableSlots = slots.filter(time => {
+                                    const [h, m] = time.split(':').map(Number);
+                                    const start = h * 60 + m;
+                                    const end = start + serviceDuration;
+
+                                    // Check collision with any existing appointment
+                                    return !takenAppts.some(a => {
+                                        const [ah, am] = a.time.split(':').map(Number);
+                                        const aSvc = services.find(s => s.id === a.service);
+                                        const aDuration = aSvc?.duration || 60;
+                                        const aStart = ah * 60 + am;
+                                        const aEnd = aStart + aDuration;
+
+                                        // Overlap condition
+                                        return (start < aEnd && end > aStart);
+                                    });
+                                });
+
+                                if (availableSlots.length === 0) return <p className="col-span-full text-center text-stone-400 italic py-10">Désolé, aucune disponibilité ce jour pour ce service.</p>;
+
+                                return availableSlots.map(time => (
                                     <button
                                         key={time}
                                         onClick={() => handleTimeSelect(time)}
@@ -352,8 +508,30 @@ export function BookingFlow() {
                                     </span>
                                 </div>
                             </div>
-                            <button className="w-full py-6 bg-stone-950 text-white font-bold uppercase tracking-[0.4em] rounded-xl hover:bg-[#B08D57] transition-all duration-700 shadow-2xl">
-                                Réserver chez {settings.studioName.split(' ')[0]}
+                            <button 
+                                onClick={async (e) => {
+                                    e.preventDefault();
+                                    try {
+                                        await handleConfirmBooking();
+                                    } catch (err) {
+                                        console.error("Booking error:", err);
+                                        alert("Une erreur est survenue lors de la réservation. Veuillez réessayer.");
+                                    }
+                                }}
+                                disabled={isSubmitting}
+                                className={cn(
+                                    "w-full py-6 text-white font-bold uppercase tracking-[0.4em] rounded-xl transition-all duration-700 shadow-2xl flex items-center justify-center gap-4",
+                                    isSubmitting ? "bg-stone-500 cursor-not-allowed" : "bg-stone-950 hover:bg-[#B08D57]"
+                                )}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                        CONFIRMATION...
+                                    </>
+                                ) : (
+                                    `Réserver chez ${settings?.studioName ? settings.studioName.split(' ')[0] : 'Palma'}`
+                                )}
                             </button>
                         </div>
                         <button onClick={prevStep} className="flex items-center gap-2 text-stone-400 hover:text-stone-900 transition-colors">
