@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Pencil, Trash2, X, Save, RotateCcw, Eye, EyeOff, Clock, Upload } from "lucide-react";
-import { useServices, resetServices } from "@/lib/servicesStore";
+import { useServices } from "@/lib/servicesStore";
 import type { Service } from "@/lib/servicesStore";
 
 const PRESET_COLORS = [
@@ -28,7 +28,7 @@ const EMPTY_FORM: EditForm = {
 };
 
 export default function ServicesAdminPage() {
-    const { services, update } = useServices();
+    const { services, update, resetServices } = useServices();
     const [editing, setEditing] = useState<EditForm | null>(null);
     const [isNew, setIsNew] = useState(false);
     const [customColor, setCustomColor] = useState("#B08D57");
