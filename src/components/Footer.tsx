@@ -59,7 +59,7 @@ export function Footer() {
                             &copy; {currentYear} {settings.studioName}.
                         </p>
                         <p className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">
-                            Fait avec amour par <a href="https://syntalys.ch" target="_blank" rel="noopener noreferrer" className="hover:text-accent-dark transition-colors">Syntalys</a> pour Elisa Palma
+                            Fait avec amour par <a href="https://syntalys.ch" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700 transition-colors underline decoration-blue-500/30 underline-offset-4">Syntalys</a> pour Elisa Palma
                         </p>
                         <div className="flex items-center gap-8 text-[9px] uppercase tracking-[0.2em] text-stone-400 font-bold">
                             <Link href="/mentions-legales" className="hover:text-stone-900 transition-colors">Légal</Link>
