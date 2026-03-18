@@ -7,6 +7,7 @@ import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type SiteSettings = {
     heroImage: string;
+    logo: string;
     studioName: string;
     phone: string;
     email: string;
@@ -18,6 +19,7 @@ export type SiteSettings = {
 // ─── Defaults ─────────────────────────────────────────────────────────────────
 const DEFAULT_SETTINGS: SiteSettings = {
     heroImage: "/images/hero.png",
+    logo: "/logo.png",
     studioName: "Palma Institut",
     phone: "+41 76 369 72 07",
     email: "palmaelisa49@gmail.com",

@@ -16,6 +16,7 @@ export default function SettingsPage() {
     const [saved, setSaved] = useState(false);
     const { hours, updateDay, loading: hoursLoading } = useBusinessHours();
     const heroFileRef = useRef<HTMLInputElement>(null);
+    const logoFileRef = useRef<HTMLInputElement>(null);
 
     const handleSave = () => {
         setSaved(true);
@@ -39,6 +40,17 @@ export default function SettingsPage() {
         reader.readAsDataURL(file);
     };
 
+    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const result = event.target?.result as string;
+            updateSettings({ logo: result });
+        };
+        reader.readAsDataURL(file);
+    };
+
     return (
         <div className="max-w-4xl space-y-10 pb-24">
 
@@ -55,26 +67,52 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
-                    <div
-                        onClick={() => heroFileRef.current?.click()}
-                        className="w-full lg:w-44 aspect-[4/5] rounded-[2rem] overflow-hidden border border-stone-200 shadow-xl flex-shrink-0 bg-stone-50 relative group cursor-pointer"
-                    >
-                        <img src={settings.heroImage} alt="Preview" className="w-full h-full object-cover transition-opacity group-hover:opacity-40" />
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Plus size={32} className="text-stone-900" />
-                        </div>
-                    </div>
-                    <div className="flex-1 space-y-5">
-                        <p className="text-xs md:text-sm text-stone-500 leading-relaxed font-light italic">
-                            "Cette photo est l'âme de votre site. Choisissez une image qui respire votre savoir-faire, idéalement un visuel de haute qualité."
-                        </p>
-                        <button
+                    <div className="flex flex-col items-center gap-4 w-full lg:w-44">
+                        <div
                             onClick={() => heroFileRef.current?.click()}
-                            className="w-full md:w-auto flex items-center justify-center gap-3 px-8 py-4 bg-stone-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#B08D57] transition-all shadow-xl shadow-stone-900/10"
+                            className="w-full aspect-[4/5] rounded-[2rem] overflow-hidden border border-stone-200 shadow-xl bg-stone-50 relative group cursor-pointer"
                         >
-                            <Upload size={14} /> Changer la photo
-                        </button>
+                            <img src={settings.heroImage} alt="Preview" className="w-full h-full object-cover transition-opacity group-hover:opacity-40" />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Plus size={32} className="text-stone-900" />
+                            </div>
+                        </div>
+                        <p className="text-[7px] uppercase tracking-widest text-stone-300 font-bold text-center">Image de fond (Hero)</p>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-4 w-full lg:w-44">
+                        <div
+                            onClick={() => logoFileRef.current?.click()}
+                            className="w-full aspect-square rounded-[2rem] overflow-hidden border border-stone-200 shadow-xl bg-white relative group cursor-pointer p-4 flex items-center justify-center"
+                        >
+                            <img src={settings.logo} alt="Logo Preview" className="max-w-full max-h-full object-contain transition-opacity group-hover:opacity-40" />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Plus size={32} className="text-stone-900" />
+                            </div>
+                        </div>
+                        <p className="text-[7px] uppercase tracking-widest text-stone-300 font-bold text-center">Logo</p>
+                    </div>
+
+                    <div className="flex-1 space-y-5 pt-4">
+                        <p className="text-xs md:text-sm text-stone-500 leading-relaxed font-light italic">
+                            "L'identité visuelle de votre studio est la première chose que vos clients verront. Assurez-vous d'utiliser un logo avec un fond transparent pour un rendu professionnel."
+                        </p>
+                        <div className="flex flex-wrap gap-4">
+                            <button
+                                onClick={() => heroFileRef.current?.click()}
+                                className="flex items-center justify-center gap-3 px-6 py-4 bg-stone-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#B08D57] transition-all shadow-xl shadow-stone-900/10"
+                            >
+                                <Upload size={14} /> Changer Hero
+                            </button>
+                            <button
+                                onClick={() => logoFileRef.current?.click()}
+                                className="flex items-center justify-center gap-3 px-6 py-4 border border-stone-200 text-stone-700 bg-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-stone-50 transition-all shadow-xl"
+                            >
+                                <Upload size={14} /> Changer Logo
+                            </button>
+                        </div>
                         <input ref={heroFileRef} type="file" accept="image/*" className="hidden" onChange={handleHeroUpload} />
+                        <input ref={logoFileRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
                     </div>
                 </div>
             </div>

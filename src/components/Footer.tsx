@@ -12,7 +12,7 @@ export function Footer() {
         <footer className="py-20 px-6 bg-background text-foreground border-t border-accent/10 relative overflow-hidden">
              {/* Subtle background element */}
              <div className="absolute right-[-10%] bottom-[-10%] w-64 h-64 opacity-[0.03] rotate-12 pointer-events-none">
-                <img src="/logo.png" alt="" className="w-full h-full object-contain" />
+                <img src={settings.logo} alt="" className="w-full h-full object-contain" />
              </div>
 
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">

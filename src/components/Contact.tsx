@@ -89,7 +89,7 @@ export function Contact() {
                     >
                         <div className="aspect-video bg-white p-12 shadow-2xl rounded-2xl border border-accent/10 flex flex-col justify-center relative overflow-hidden group">
                            <div className="relative z-10 flex flex-col items-center">
-                                <img src="/logo.png" alt="Logo" className="w-40 mb-8 opacity-90 transition-opacity" />
+                                <img src={settings.logo} alt="Logo" className="w-40 mb-8 opacity-90 transition-opacity" />
                                 <div className="text-center space-y-2">
                                     <h3 
                                         style={{ color: '#805836' }}

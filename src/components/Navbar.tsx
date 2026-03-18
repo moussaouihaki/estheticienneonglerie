@@ -60,7 +60,7 @@ export function Navbar() {
                 <div className="flex flex-col items-center flex-1 lg:flex-none">
                     <Link href="/" className="group flex flex-col items-center">
                         <img
-                            src="/logo.png"
+                            src={settings.logo}
                             alt="Palma Institut"
                             className="h-12 md:h-16 w-auto object-contain transition-all duration-700 group-hover:scale-105"
                         />
