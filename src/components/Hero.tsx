@@ -31,7 +31,7 @@ export default function Hero() {
                     <img 
                         src={settings.logo} 
                         alt="Palma Institut" 
-                        className="w-[280px] md:w-[450px] h-auto object-contain mx-auto transition-transform duration-700 hover:scale-105"
+                        className="w-[320px] md:w-[600px] h-auto object-contain mx-auto transition-transform duration-700 hover:scale-105"
                     />
                 </motion.div>
 
