@@ -143,7 +143,9 @@ export default function CancelPage({ params }: { params: Promise<{ id: string }>
                                         <Calendar className="text-[#CFC4AC]" size={18} />
                                         <div>
                                             <p className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Date du rendez-vous</p>
-                                            <p className="text-sm font-bold text-stone-800 uppercase tracking-widest">{appointment.date}</p>
+                                            <p className="text-sm font-bold text-stone-800 uppercase tracking-widest">
+                                                {new Date(appointment.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                            </p>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4 text-left">

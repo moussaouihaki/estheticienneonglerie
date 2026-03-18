@@ -78,6 +78,14 @@ export const useAppointments = create<AppointmentsState>((set) => ({
             const cancelUrl = `${window.location.origin}/annuler-rdv/${apptRef.id}`;
             const logoUrl = settings.logo.startsWith('http') ? settings.logo : `${window.location.origin}${settings.logo}`;
             
+            // Format date for the email (ex: Mardi 18 mars 2026)
+            const formattedDate = new Date(data.date).toLocaleDateString('fr-FR', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric' 
+            });
+
             await fetch("/api/send-email", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -94,9 +102,9 @@ export const useAppointments = create<AppointmentsState>((set) => ({
                                 <p style="line-height: 1.6;">Votre demande de rendez-vous a été enregistrée avec succès. Voici les détails de votre prestation de prestige :</p>
                                 
                                 <div style="margin: 30px 0; border-left: 4px solid #CFC4AC; padding: 10px 25px; background-color: white; border-radius: 0 15px 15px 0;">
-                                    <p style="margin: 8px 0;"><b>Prestation :</b> ${data.service}</p>
-                                    <p style="margin: 8px 0;"><b>Date :</b> ${data.date}</p>
+                                    <p style="margin: 8px 0; text-transform: capitalize;"><b>Date :</b> ${formattedDate}</p>
                                     <p style="margin: 8px 0;"><b>Heure :</b> ${data.time}</p>
+                                    <p style="margin: 8px 0;"><b>Prestation :</b> ${data.service}</p>
                                 </div>
 
                                 <p style="font-size: 13px; font-style: italic; color: #78716c; margin-bottom: 30px; background-color: #fef2f2; padding: 15px; border-radius: 10px;">
