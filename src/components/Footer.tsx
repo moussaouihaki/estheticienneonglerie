@@ -18,14 +18,11 @@ export function Footer() {
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-12 relative z-10">
 
                 <div className="flex flex-col items-center md:items-start gap-6">
-                    <div className="flex flex-col items-center md:items-start gap-1">
-                        <span 
-                            style={{ color: '#805836' }}
-                            className="font-serif text-3xl tracking-wide"
-                        >
-                            Onaha
-                        </span>
-                    </div>
+                        <img 
+                            src={settings.logo} 
+                            alt={settings.studioName} 
+                            className="h-20 w-auto object-contain"
+                        />
 
                     <div className="flex items-center gap-4">
                         {settings.instagram && (
