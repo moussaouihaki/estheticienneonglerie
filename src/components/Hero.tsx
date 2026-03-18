@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { useSiteSettings } from "@/lib/siteSettingsStore";
 
-export function Hero() {
+export default function Hero() {
+    const { settings } = useSiteSettings();
+    
     return (
         <section id="accueil" className="relative min-h-screen flex items-center overflow-hidden">
             {/* Background Image with Parallax-like overlay */}
@@ -24,20 +27,12 @@ export function Hero() {
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className="flex flex-col items-center gap-1"
                 >
-                    <h1
-                        className="font-serif text-4xl md:text-7xl tracking-wide leading-tight"
-                        style={{ color: '#805836' }}
-                    >
-                        Palma Institut
-                    </h1>
-                    
-                    {/* Beauty Salon - Noir 000000 - Glacial style */}
-                    <span
-                        style={{ fontFamily: 'var(--font-caps)', color: '#000000', letterSpacing: '0.6em' }}
-                        className="text-xs md:text-sm uppercase font-black mt-2"
-                    >
-                        Beauty Salon
-                    </span>
+                    <h1 className="sr-only">Palma Institut - Beauty Salon</h1>
+                    <img 
+                        src={settings.logo} 
+                        alt="Palma Institut" 
+                        className="w-[280px] md:w-[450px] h-auto object-contain mx-auto transition-transform duration-700 hover:scale-105"
+                    />
                 </motion.div>
 
                 {/* Slogan & Certification */}
