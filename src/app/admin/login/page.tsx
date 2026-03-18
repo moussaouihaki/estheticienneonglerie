@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Lock, User, ArrowRight, Sparkles } from "lucide-react";
 import { useSiteSettings } from "@/lib/siteSettingsStore";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function LoginPage() {
     const { settings } = useSiteSettings();
-    const [id, setId] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -20,15 +22,13 @@ export default function LoginPage() {
         setIsLoading(true);
         setError("");
 
-        // Simulating a luxury authentication delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-
-        if (id === "admin" && password === "palma2026") {
-            // In a real app, we would set a secure cookie here
-            localStorage.setItem("palma_auth", "true");
+        try {
+            if (!auth) throw new Error("Firebase Service 'auth' uninitialized");
+            await signInWithEmailAndPassword(auth, email, password);
             router.push("/admin");
-        } else {
-            setError("Accès refusé. Veuillez vérifier vos identifiants.");
+        } catch (e: any) {
+            console.error("Auth error:", e);
+            setError("Email ou mot de passe incorrect. Assurez-vous d'avoir bien créé votre compte dans la console Firebase.");
             setIsLoading(false);
         }
     };
@@ -64,14 +64,14 @@ export default function LoginPage() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="space-y-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[9px] uppercase tracking-widest font-black text-stone-400 ml-1">Identifiant</label>
+                                    <label className="text-[9px] uppercase tracking-widest font-black text-stone-400 ml-1">Email</label>
                                     <div className="relative">
                                         <User size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-300" />
                                         <input
-                                            type="text"
-                                            value={id}
-                                            onChange={(e) => setId(e.target.value)}
-                                            placeholder="admin"
+                                            type="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            placeholder="votre@email.com"
                                             className="w-full pl-12 pr-4 py-4 bg-stone-50 border border-stone-100 rounded-2xl text-sm focus:outline-none focus:border-[#CFC4AC] transition-all"
                                             required
                                         />
@@ -95,13 +95,13 @@ export default function LoginPage() {
                             </div>
 
                             {error && (
-                                <motion.p
+                                <motion.div
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     className="text-[10px] text-red-500 font-bold bg-red-50 p-3 rounded-xl text-center border border-red-100"
                                 >
                                     {error}
-                                </motion.p>
+                                </motion.div>
                             )}
 
                             <button

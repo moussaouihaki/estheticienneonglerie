@@ -25,24 +25,47 @@ const navItems = [
     { href: "/admin/settings", label: "Paramètres", slug: "06" },
 ];
 
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
     const [isAuth, setIsAuth] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
-        const auth = localStorage.getItem("palma_auth");
-        if (!auth && pathname !== "/admin/login") {
-            router.push("/admin/login");
-        } else {
-            setIsAuth(true);
+        if (!auth) {
+            setLoading(false);
+            return;
         }
+
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                if (pathname !== "/admin/login") {
+                    router.push("/admin/login");
+                }
+                setIsAuth(false);
+            } else {
+                setIsAuth(true);
+                if (pathname === "/admin/login") {
+                    router.push("/admin");
+                }
+            }
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
     }, [pathname, router]);
 
-    const handleLogout = () => {
-        localStorage.removeItem("palma_auth");
-        router.push("/admin/login");
+    const handleLogout = async () => {
+        try {
+            if (auth) await signOut(auth);
+            router.push("/admin/login");
+        } catch (e) {
+            console.error("Logout error:", e);
+        }
     };
 
     const pageTitle: Record<string, string> = {
@@ -55,6 +78,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         "/admin/settings": "Paramètres du Studio",
         "/admin/login": "Connexion Sécurisée",
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-stone-50 flex items-center justify-center">
+                <div className="font-serif text-[#CFC4AC] animate-pulse tracking-[0.3em] uppercase">Chargement...</div>
+            </div>
+        );
+    }
 
     // If it's the login page, don't show sidebar/header
     if (pathname === "/admin/login") {
