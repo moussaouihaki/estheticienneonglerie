@@ -13,13 +13,6 @@ const PRESET_COLORS = [
 
 const PRESET_ICONS = ["✨", "💎", "🌿", "💅", "🌸", "🌙", "🦋", "🌹", "🪷", "💆", "🌺", "🍃"];
 
-function hexToRgba(hex: string, alpha: number) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r},${g},${b},${alpha})`;
-}
-
 type EditForm = Omit<Service, "id"> & { id?: string };
 
 const EMPTY_FORM: EditForm = {
@@ -28,16 +21,14 @@ const EMPTY_FORM: EditForm = {
 };
 
 export default function ServicesAdminPage() {
-    const { services, update, resetServices } = useServices();
+    const { services, update, resetServices, loading } = useServices();
     const [editing, setEditing] = useState<EditForm | null>(null);
     const [isNew, setIsNew] = useState(false);
-    const [customColor, setCustomColor] = useState("#B08D57");
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file || !editing) return;
-
         const reader = new FileReader();
         reader.onload = (event) => {
             const result = event.target?.result as string;
@@ -46,17 +37,8 @@ export default function ServicesAdminPage() {
         reader.readAsDataURL(file);
     };
 
-    const openNew = () => {
-        setEditing({ ...EMPTY_FORM });
-        setIsNew(true);
-    };
-
-    const openEdit = (svc: Service) => {
-        setEditing({ ...svc });
-        setCustomColor(svc.color);
-        setIsNew(false);
-    };
-
+    const openNew = () => { setEditing({ ...EMPTY_FORM }); setIsNew(true); };
+    const openEdit = (svc: Service) => { setEditing({ ...svc }); setIsNew(false); };
     const closeEdit = () => { setEditing(null); setIsNew(false); };
 
     const saveEdit = () => {
@@ -69,100 +51,79 @@ export default function ServicesAdminPage() {
         closeEdit();
     };
 
-    const deleteService = (id: string) => {
-        if (confirm("Supprimer ce service ?")) update(services.filter(s => s.id !== id));
-    };
+    const deleteService = (id: string) => { if (confirm("Supprimer ce service ?")) update(services.filter(s => s.id !== id)); };
+    const toggleVisible = (id: string) => update(services.map(s => s.id === id ? { ...s, visible: !s.visible } : s));
 
-    const toggleVisible = (id: string) =>
-        update(services.map(s => s.id === id ? { ...s, visible: !s.visible } : s));
+    if (loading) return (
+        <div className="h-full flex items-center justify-center">
+            <div className="w-10 h-10 border-4 border-stone-100 border-t-[#B08D57] rounded-full animate-spin" />
+        </div>
+    );
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 md:space-y-12">
 
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div>
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="space-y-1">
+                    <h1 className="text-3xl md:text-4xl font-serif text-stone-900 italic leading-tight">Services & Prestations</h1>
                     <p className="text-[9px] uppercase tracking-widest text-stone-400 font-black">
-                        {services.length} service{services.length > 1 ? "s" : ""} — {services.filter(s => s.visible).length} visible{services.filter(s => s.visible).length > 1 ? "s" : ""} sur le site
+                        {services.length} prestations — {services.filter(s => s.visible).length} actives sur le site
                     </p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <button onClick={() => { if (confirm("Réinitialiser les services par défaut ?")) resetServices(); }}
-                        className="flex items-center gap-2 px-4 py-2.5 border border-stone-200 rounded-xl text-xs font-bold text-stone-500 hover:bg-stone-50 transition-all">
-                        <RotateCcw size={13} /> Réinitialiser
+                <div className="flex items-center gap-2 md:gap-3">
+                    <button onClick={() => { if (confirm("Réinitialiser les services ?")) resetServices(); }}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-3 border border-stone-200 rounded-2xl text-[9px] font-black uppercase tracking-widest text-stone-400 hover:bg-stone-50 transition-all font-bold">
+                        <RotateCcw size={12} /> Reset
                     </button>
                     <button onClick={openNew}
-                        className="flex items-center gap-2 px-5 py-2.5 bg-stone-950 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#B08D57] transition-all">
-                        <Plus size={14} /> Nouveau service
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 bg-stone-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#B08D57] transition-all shadow-xl shadow-stone-900/10"
+                    >
+                        <Plus size={14} /> Nouveau
                     </button>
                 </div>
             </div>
 
-            {/* Services cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {/* Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
                 <AnimatePresence mode="popLayout">
                     {services.map(svc => (
                         <motion.div
                             key={svc.id}
                             layout
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.9 }}
-                            className={`bg-white border rounded-3xl shadow-sm overflow-hidden group transition-all hover:shadow-lg ${!svc.visible ? "opacity-60" : ""}`}
-                            style={{ borderColor: svc.color + "40" }}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className={`bg-white border border-stone-100 rounded-[2.5rem] shadow-sm overflow-hidden group transition-all hover:shadow-xl ${!svc.visible ? "opacity-60 grayscale-[0.5]" : ""}`}
                         >
-                            {/* Color header */}
-                            <div className="h-2" style={{ background: svc.color }} />
-
-                            <div className="p-7 space-y-5">
-                                {/* Icon + name */}
-                                <div className="flex items-start justify-between gap-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm flex-shrink-0">
+                            <div className="h-1.5" style={{ background: svc.color }} />
+                            <div className="p-6 md:p-8 space-y-6">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-sm flex-shrink-0 border border-stone-50 bg-stone-50">
                                             <img src={svc.image} alt={svc.name} className="w-full h-full object-cover" />
                                         </div>
                                         <div>
-                                            <h4 className="font-bold text-stone-900 leading-tight">{svc.name}</h4>
-                                            {!svc.visible && (
-                                                <span className="text-[9px] uppercase tracking-widest text-stone-400 font-black flex items-center gap-1 mt-0.5">
-                                                    <EyeOff size={9} /> Masqué
-                                                </span>
-                                            )}
+                                            <h4 className="font-serif text-lg text-stone-900 leading-tight">{svc.name}</h4>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <span className="text-[9px] font-black uppercase tracking-widest text-[#B08D57] bg-[#B08D57]/5 px-2 py-0.5 rounded-full">CHF {svc.price}</span>
+                                                <span className="text-[9px] font-bold text-stone-400 uppercase tracking-widest flex items-center gap-1"><Clock size={10} /> {svc.duration}m</span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <button onClick={() => toggleVisible(svc.id)} className="p-2.5 rounded-xl hover:bg-stone-50 text-stone-300 transition-colors">
+                                        {svc.visible ? <Eye size={16} /> : <EyeOff size={16} />}
+                                    </button>
                                 </div>
 
-                                <p className="text-xs text-stone-500 leading-relaxed">{svc.description}</p>
+                                <p className="text-xs text-stone-500 leading-relaxed italic line-clamp-2">"{svc.description}"</p>
 
-                                {/* Duration + price */}
-                                <div className="flex items-center gap-4">
-                                    <div className="flex items-center gap-1.5" style={{ color: svc.color }}>
-                                        <Clock size={13} />
-                                        <span className="text-xs font-bold">{svc.duration} min</span>
-                                    </div>
-                                    <div className="flex items-center gap-1.5" style={{ color: svc.color }}>
-                                        <span className="text-xs font-bold">CHF {svc.price}</span>
-                                    </div>
-                                    <div className="ml-auto flex items-center gap-1.5">
-                                        <div className="w-4 h-4 rounded-full border-2 border-white shadow" style={{ background: svc.color }} />
-                                        <span className="text-[9px] font-mono text-stone-400">{svc.color}</span>
-                                    </div>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex items-center gap-2 pt-2 border-t border-stone-50">
-                                    <button onClick={() => openEdit(svc)}
-                                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-stone-50 hover:bg-stone-100 text-xs font-bold text-stone-600 transition-all">
-                                        <Pencil size={12} /> Modifier
+                                <div className="flex items-center gap-2 pt-4 border-t border-stone-50">
+                                    <button onClick={() => openEdit(svc)} className="flex-1 py-3 bg-stone-50 hover:bg-stone-100 text-stone-600 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] transition-all">
+                                        Modifier
                                     </button>
-                                    <button onClick={() => toggleVisible(svc.id)}
-                                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-stone-50 hover:bg-stone-100 text-xs font-bold text-stone-600 transition-all">
-                                        {svc.visible ? <EyeOff size={12} /> : <Eye size={12} />}
-                                        {svc.visible ? "Masquer" : "Afficher"}
-                                    </button>
-                                    <button onClick={() => deleteService(svc.id)}
-                                        className="ml-auto p-2 rounded-lg text-red-400 hover:bg-red-50 transition-all">
-                                        <Trash2 size={14} />
+                                    <button onClick={() => deleteService(svc.id)} className="p-3 rounded-xl hover:bg-rose-50 text-rose-300 hover:text-rose-500 transition-all">
+                                        <Trash2 size={16} />
                                     </button>
                                 </div>
                             </div>
@@ -171,146 +132,79 @@ export default function ServicesAdminPage() {
                 </AnimatePresence>
             </div>
 
-            {/* ─── Edit / Create Modal ─────────────────────────────────────── */}
+            {/* Modal */}
             <AnimatePresence>
                 {editing && (
-                    <motion.div
-                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-6"
-                        onClick={e => e.target === e.currentTarget && closeEdit()}
-                    >
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-6" onClick={e => e.target === e.currentTarget && closeEdit()}>
                         <motion.div
-                            initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95 }}
-                            className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden"
+                            initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+                            className="bg-white rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-y-auto max-h-[90vh] relative"
                         >
-                            {/* Modal header with live color preview */}
-                            <div className="h-2" style={{ background: editing.color }} />
-                            <div className="p-8 space-y-6">
+                            <div className="h-2 sticky top-0 z-10" style={{ background: editing.color }} />
+                            <div className="p-8 md:p-10 space-y-8">
                                 <div className="flex items-center justify-between">
-                                    <h3 className="text-xl font-serif text-stone-900">
-                                        {isNew ? "Nouveau service" : "Modifier le service"}
-                                    </h3>
-                                    <button onClick={closeEdit} className="p-2 rounded-full hover:bg-stone-100"><X size={16} /></button>
+                                    <h3 className="text-3xl font-serif text-stone-900 italic">{isNew ? "Nouveau Service" : "Détails Prestation"}</h3>
+                                    <button onClick={closeEdit} className="p-3 hover:bg-stone-50 rounded-full text-stone-300"><X size={20} /></button>
                                 </div>
 
-                                <div className="space-y-5">
-                                    {/* Name */}
+                                <div className="space-y-6">
                                     <div className="space-y-1.5">
-                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">Nom du service</label>
+                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400 ml-1">Nom</label>
                                         <input value={editing.name} onChange={e => setEditing({ ...editing, name: e.target.value })}
-                                            placeholder="ex: Manucure Russe Prestige"
-                                            className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57]" />
+                                            className="w-full border border-stone-50 bg-stone-50/50 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-[#B08D57] shadow-inner" />
                                     </div>
-
-                                    {/* Description */}
                                     <div className="space-y-1.5">
-                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">Description</label>
+                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400 ml-1">Description</label>
                                         <textarea value={editing.description} onChange={e => setEditing({ ...editing, description: e.target.value })}
-                                            placeholder="Décrivez le service en quelques mots..."
-                                            rows={2}
-                                            className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57] resize-none" />
+                                            rows={2} className="w-full border border-stone-50 bg-stone-50/50 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-[#B08D57] shadow-inner resize-none" />
                                     </div>
-
-                                    {/* Duration + Price */}
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
-                                            <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">Durée (minutes)</label>
-                                            <input type="number" min={15} step={15} value={editing.duration}
-                                                onChange={e => setEditing({ ...editing, duration: Number(e.target.value) })}
-                                                className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57]" />
+                                            <label className="text-[9px] uppercase tracking-widest font-black text-stone-400 ml-1">Durée (min)</label>
+                                            <input type="number" step={15} value={editing.duration} onChange={e => setEditing({ ...editing, duration: Number(e.target.value) })}
+                                                className="w-full border border-stone-50 bg-stone-50/50 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-[#B08D57] shadow-inner" />
                                         </div>
                                         <div className="space-y-1.5">
-                                            <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">Prix (CHF)</label>
-                                            <input type="number" min={0} step={5} value={editing.price}
-                                                onChange={e => setEditing({ ...editing, price: Number(e.target.value) })}
-                                                className="w-full border border-stone-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#B08D57]" />
+                                            <label className="text-[9px] uppercase tracking-widest font-black text-stone-400 ml-1">Prix (CHF)</label>
+                                            <input type="number" step={5} value={editing.price} onChange={e => setEditing({ ...editing, price: Number(e.target.value) })}
+                                                className="w-full border border-stone-50 bg-stone-50/50 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:border-[#B08D57] shadow-inner" />
                                         </div>
                                     </div>
 
-                                    {/* Image Selection */}
                                     <div className="space-y-1.5">
-                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">Photo du service (Upload)</label>
+                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400 ml-1">Visuel</label>
                                         <div className="flex gap-4 items-center">
-                                            <div className="w-20 h-20 rounded-2xl bg-stone-50 overflow-hidden border border-stone-100 flex-shrink-0 relative group">
-                                                <img src={editing.image} alt="" className="w-full h-full object-cover transition-opacity group-hover:opacity-40" />
-                                                <div
-                                                    onClick={() => fileInputRef.current?.click()}
-                                                    className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity"
-                                                >
-                                                    <Plus size={20} className="text-stone-900" />
-                                                </div>
-                                            </div>
-                                            <div className="flex-1 space-y-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => fileInputRef.current?.click()}
-                                                    className="flex items-center gap-2 px-4 py-2.5 border border-stone-200 rounded-xl text-[10px] font-black uppercase tracking-widest text-stone-600 hover:bg-stone-50 transition-all"
-                                                >
-                                                    Changer la photo
-                                                </button>
-                                                <p className="text-[9px] text-stone-400 leading-tight">
-                                                    Format recommandé: 1:1 (carré) ou 4:5. <br />
-                                                    La photo s'affichera dans le catalogue.
-                                                </p>
-                                                <input
-                                                    ref={fileInputRef}
-                                                    type="file"
-                                                    accept="image/*"
-                                                    className="hidden"
-                                                    onChange={handleImageUpload}
-                                                />
-                                            </div>
+                                            <img src={editing.image} className="w-20 h-20 rounded-2xl object-cover border border-stone-100 shadow-sm" />
+                                            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-2 px-5 py-3 border border-stone-100 rounded-xl text-[9px] font-black uppercase tracking-widest text-stone-400 hover:bg-stone-50">
+                                                <Upload size={12} /> Télécharger
+                                            </button>
+                                            <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                                         </div>
                                     </div>
 
-                                    {/* Icon */}
-                                    <div className="space-y-2">
-                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">Icône</label>
-                                        <div className="flex flex-wrap gap-2">
-                                            {PRESET_ICONS.map(ic => (
-                                                <button key={ic} onClick={() => setEditing({ ...editing, icon: ic })}
-                                                    className={`w-9 h-9 rounded-xl text-lg flex items-center justify-center border-2 transition-all ${editing.icon === ic ? "border-stone-900 bg-stone-50" : "border-transparent hover:bg-stone-50"}`}>
-                                                    {ic}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Color */}
-                                    <div className="space-y-2">
-                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400">Couleur du service</label>
-                                        <div className="flex flex-wrap gap-2">
+                                    <div className="space-y-3">
+                                        <label className="text-[9px] uppercase tracking-widest font-black text-stone-400 ml-1">Couleur thématique</label>
+                                        <div className="flex flex-wrap gap-2.5">
                                             {PRESET_COLORS.map(c => (
                                                 <button key={c} onClick={() => setEditing({ ...editing, color: c })}
-                                                    className={`w-8 h-8 rounded-full border-4 transition-all ${editing.color === c ? "border-stone-900 scale-110" : "border-transparent hover:scale-105"}`}
+                                                    className={`w-8 h-8 rounded-full transition-all border-4 ${editing.color === c ? "border-stone-900 scale-110 shadow-lg" : "border-transparent"}`}
                                                     style={{ background: c }} />
                                             ))}
                                         </div>
-                                        <div className="flex items-center gap-3 mt-2">
-                                            <input type="color" value={editing.color}
-                                                onChange={e => setEditing({ ...editing, color: e.target.value })}
-                                                className="w-10 h-10 rounded-xl cursor-pointer border border-stone-200" />
-                                            <span className="text-xs font-mono text-stone-500">{editing.color}</span>
-                                            <div className="ml-auto px-3 py-1.5 rounded-lg text-xs font-bold text-white" style={{ background: editing.color }}>
-                                                Aperçu
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="flex gap-3 pt-4 border-t border-stone-100">
-                                    <button onClick={closeEdit}
-                                        className="flex-1 py-3 border border-stone-200 rounded-xl text-xs font-bold uppercase tracking-widest text-stone-500 hover:bg-stone-50">
-                                        Annuler
+                                <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-stone-50">
+                                    <button onClick={saveEdit} className="w-full order-first sm:order-last py-4 bg-stone-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#B08D57] transition-all shadow-xl shadow-stone-900/10">
+                                        Enregistrer
                                     </button>
-                                    <button onClick={saveEdit}
-                                        className="flex-1 py-3 bg-stone-950 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#B08D57] transition-all flex items-center justify-center gap-2">
-                                        <Save size={13} /> Enregistrer
+                                    <button onClick={closeEdit} className="w-full py-4 border border-stone-100 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-stone-300 hover:bg-stone-50 transition-all font-bold">
+                                        Annuler
                                     </button>
                                 </div>
                             </div>
                         </motion.div>
-                    </motion.div>
+                    </div>
                 )}
             </AnimatePresence>
         </div>

@@ -37,15 +37,20 @@ export function useBusinessHours() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!db) {
+            setLoading(false);
+            return;
+        }
+
         const unsubscribe = onSnapshot(collection(db, COLLECTION_NAME), (snap) => {
             if (snap.empty) {
                 setHours(DEFAULT_HOURS);
             } else {
                 const cloudHours = snap.docs.map(doc => doc.data() as BusinessDay);
-                // Ensure correct order
                 const sorted = DEFAULT_HOURS.map(d => cloudHours.find(ch => ch.day === d.day) || d);
                 setHours(sorted);
             }
+            setLoading(true); // Wait, loading should be false here
             setLoading(false);
         }, (err) => {
             console.error("Firestore business hours error:", err);
@@ -58,6 +63,7 @@ export function useBusinessHours() {
     const update = async (updated: BusinessDay[]) => {
         setHours(updated);
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             for (const d of updated) {
                 await setDoc(doc(db, COLLECTION_NAME, d.day), d);
             }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Instagram, Phone } from "lucide-react";
+import { Menu, X, Instagram, Phone, Sparkles } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useSiteSettings } from "@/lib/siteSettingsStore";
@@ -36,103 +36,112 @@ export function Navbar() {
     return (
         <nav
             className={cn(
-                "fixed top-0 left-0 right-0 z-[110] transition-all duration-700 h-24 flex items-center",
-                isScrolled ? "bg-background/95 backdrop-blur-2xl border-b border-accent/10 shadow-sm" : "bg-transparent"
+                "fixed top-0 left-0 right-0 z-[110] transition-all duration-700 h-20 md:h-24 flex items-center",
+                isScrolled ? "bg-white/95 backdrop-blur-2xl border-b border-stone-100 shadow-sm" : "bg-transparent"
             )}
         >
             <div className="w-full max-w-[1800px] mx-auto flex items-center justify-between px-6 md:px-12">
 
-                {/* Left Links */}
+                {/* Left Links (Desktop) */}
                 <div className="hidden lg:flex items-center space-x-12 flex-1">
                     {navLinks.slice(0, 3).map((link) => (
                         <Link
                             key={link.name}
                             href={link.href}
-                            className="text-[10px] uppercase tracking-[0.4em] font-bold text-foreground hover:text-accent-dark transition-all relative group"
+                            className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900 hover:italic hover:text-[#B08D57] transition-all relative group"
                         >
                             {link.name}
-                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent-dark transition-all duration-500 group-hover:w-full" />
+                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#B08D57] transition-all duration-500 group-hover:w-full" />
                         </Link>
                     ))}
                 </div>
 
-                {/* Brand Center — Logo uniquement */}
-                <div className="flex flex-col items-center flex-1">
+                {/* Brand Center */}
+                <div className="flex flex-col items-center flex-1 lg:flex-none">
                     <Link href="/" className="group flex flex-col items-center">
                         <img
                             src="/logo.png"
                             alt="Palma Institut"
-                            className="h-14 md:h-16 w-auto object-contain transition-all duration-500 group-hover:scale-105"
+                            className="h-12 md:h-16 w-auto object-contain transition-all duration-700 group-hover:scale-105"
                         />
                     </Link>
                 </div>
 
-                {/* Right Links & Action */}
+                {/* Right Links & Action (Desktop) */}
                 <div className="hidden lg:flex items-center justify-end space-x-12 flex-1">
                     {navLinks.slice(3, 5).map((link) => (
                         <Link
                             key={link.name}
                             href={link.href}
-                            className="text-[10px] uppercase tracking-[0.4em] font-bold text-foreground hover:text-accent-dark transition-all relative group"
+                            className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900 hover:italic hover:text-[#B08D57] transition-all relative group"
                         >
                             {link.name}
-                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent-dark transition-all duration-500 group-hover:w-full" />
+                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#B08D57] transition-all duration-500 group-hover:w-full" />
                         </Link>
                     ))}
                     <Link
                         href="/reservation"
-                        className="px-8 py-4 bg-foreground text-background text-[10px] uppercase tracking-[0.3em] font-black hover:bg-accent-dark transition-all duration-500 rounded-full shadow-lg"
+                        className="px-8 py-4 bg-stone-900 text-white text-[9px] font-black uppercase tracking-[0.3em] hover:bg-[#B08D57] transition-all duration-700 rounded-full shadow-2xl"
                     >
-                        Réservation
+                        Réserver
                     </Link>
                 </div>
 
                 {/* Mobile Toggle */}
                 <button
-                    className="lg:hidden p-3 text-stone-950 bg-stone-100/50 rounded-full backdrop-blur-md"
+                    className="lg:hidden p-3.5 text-stone-950 bg-stone-50/80 rounded-full backdrop-blur-md shadow-sm border border-stone-100 relative z-[200]"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
-                    {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                    {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
                 </button>
             </div>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu Overlay */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
-                        <motion.div
-                        initial={{ opacity: 0, x: "100%" }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: "100%" }}
-                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="fixed inset-0 bg-background z-[99] lg:hidden flex flex-col p-12 text-center items-center justify-center space-y-12"
+                    <motion.div
+                        initial={{ opacity: 0, y: "-100%" }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: "-100%" }}
+                        transition={{ type: "spring", damping: 30, stiffness: 150 }}
+                        className="fixed inset-0 bg-white z-[150] lg:hidden flex flex-col p-12 text-center"
                     >
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.name}
-                                href={link.href}
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="text-4xl font-serif text-foreground hover:italic hover:text-accent-dark transition-all"
-                            >
-                                {link.name}
-                            </Link>
-                        ))}
-                        <div className="h-px w-24 bg-accent/20" />
-
-                        <div className="flex items-center gap-6">
-                            {settings.instagram && (
-                                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="p-4 bg-white rounded-full text-accent-dark shadow-sm">
-                                    <Instagram size={24} />
-                                </a>
-                            )}
+                        <div className="flex flex-col items-center justify-center flex-1 space-y-10">
+                            <Sparkles className="text-[#B08D57]/20 mb-4" size={48} strokeWidth={1} />
+                            {navLinks.map((link, i) => (
+                                <motion.div
+                                    key={link.name}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.1 + i * 0.05 }}
+                                >
+                                    <Link
+                                        href={link.href}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className="text-3xl md:text-5xl font-serif text-stone-900 hover:italic transition-all"
+                                    >
+                                        {link.name}
+                                    </Link>
+                                </motion.div>
+                            ))}
                         </div>
 
-                        <Link
-                            href="/reservation"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="px-12 py-6 bg-foreground text-background text-xs uppercase tracking-[0.3em] font-bold rounded-full shadow-xl"
-                        >
-                            Prendre rendez-vous
-                        </Link>
+                        <div className="pt-12 border-t border-stone-50 space-y-8">
+                            <Link
+                                href="/reservation"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="w-full inline-block py-6 bg-stone-900 text-white text-[10px] uppercase tracking-[0.4em] font-black rounded-full shadow-2xl"
+                            >
+                                Prendre rendez-vous
+                            </Link>
+                            <div className="flex items-center justify-center gap-6 pb-6">
+                                {settings.instagram && (
+                                    <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="p-4 bg-stone-50 rounded-full text-stone-900 shadow-inner">
+                                        <Instagram size={20} />
+                                    </a>
+                                )}
+                            </div>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

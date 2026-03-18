@@ -28,6 +28,11 @@ export function useReviews() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!db) {
+            setLoading(false);
+            return;
+        }
+
         const q = query(collection(db, "reviews"), orderBy("date", "desc"));
         const unsubscribe = onSnapshot(q, (snap) => {
             const revs = snap.docs.map(doc => {
@@ -35,9 +40,6 @@ export function useReviews() {
                 return {
                     id: doc.id,
                     ...data,
-                    // If date is a Firestore timestamp, convert to ISO for components if needed, 
-                    // or just pass as is if components handle it.
-                    // For now keeping it simple.
                     date: data.date?.toDate?.()?.toISOString() || new Date().toISOString()
                 };
             }) as Review[];
@@ -53,6 +55,7 @@ export function useReviews() {
 
     const addReview = async (newReview: Omit<Review, 'id' | 'status' | 'date'>) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             await addDoc(collection(db, "reviews"), {
                 ...newReview,
                 date: serverTimestamp(),
@@ -65,6 +68,7 @@ export function useReviews() {
 
     const approveReview = async (id: string) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             const docRef = doc(db, "reviews", id);
             await updateDoc(docRef, { status: 'approved' });
         } catch (e) {
@@ -74,6 +78,7 @@ export function useReviews() {
 
     const deleteReview = async (id: string) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             await deleteDoc(doc(db, "reviews", id));
         } catch (e) {
             console.error("Error deleting review:", e);

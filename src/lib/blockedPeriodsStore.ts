@@ -27,6 +27,11 @@ export function useBlockedPeriods() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!db) {
+            setLoading(false);
+            return;
+        }
+
         const q = query(collection(db, COLLECTION_NAME));
         const unsubscribe = onSnapshot(q, (snap) => {
             const cloudBlocked = snap.docs.map(doc => ({
@@ -45,6 +50,7 @@ export function useBlockedPeriods() {
 
     const addBlock = async (newBlock: Omit<BlockedPeriod, "id">) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             await addDoc(collection(db, COLLECTION_NAME), newBlock);
         } catch (e) {
             console.error("Error adding blocked period:", e);
@@ -53,6 +59,7 @@ export function useBlockedPeriods() {
 
     const removeBlock = async (id: string) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             await deleteDoc(doc(db, COLLECTION_NAME, id));
         } catch (e) {
             console.error("Error removing blocked period:", e);

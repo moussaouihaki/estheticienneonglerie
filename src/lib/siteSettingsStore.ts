@@ -33,13 +33,17 @@ const SETTINGS_DOC_ID = "main_settings";
 // ─── Read / Write ─────────────────────────────────────────────────────────────
 export async function getSiteSettings(): Promise<SiteSettings> {
     try {
+        if (!db) throw new Error("Firebase Service 'db' uninitialized (Build phase)");
         const docRef = doc(db, "settings", SETTINGS_DOC_ID);
         const snap = await getDoc(docRef);
         if (snap.exists()) {
             return { ...DEFAULT_SETTINGS, ...snap.data() } as SiteSettings;
         }
     } catch (e) {
-        console.error("Firebase error getting settings:", e);
+        // Only log errors when we are on the client, or if it's not a build-phase check
+        if (typeof window !== "undefined") {
+            console.error("Firebase error getting settings:", e);
+        }
     }
     
     // Fallback to localStorage if firebase fails
@@ -54,6 +58,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 export async function saveSiteSettings(settings: SiteSettings): Promise<void> {
     try {
+        if (!db) throw new Error("Firebase Service 'db' uninitialized");
         const docRef = doc(db, "settings", SETTINGS_DOC_ID);
         await setDoc(docRef, settings);
     } catch (e) {
@@ -71,6 +76,12 @@ export function useSiteSettings() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Skip setup if Firebase is not initialized (e.g., during build or missing keys)
+        if (!db) {
+            setLoading(false);
+            return;
+        }
+
         // Real-time synchronization with Firestore
         const docRef = doc(db, "settings", SETTINGS_DOC_ID);
         

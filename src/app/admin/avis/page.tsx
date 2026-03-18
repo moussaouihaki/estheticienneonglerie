@@ -18,9 +18,9 @@ export default function ReviewModerationPage() {
     return (
         <div className="space-y-10">
             {/* Header */}
-            <div>
-                <h1 className="text-4xl font-serif text-stone-900 italic">Modération des Avis</h1>
-                <p className="text-stone-500 font-light mt-2">Gérez les témoignages de vos clients avant leur publication.</p>
+            <div className="space-y-2">
+                <h1 className="text-3xl md:text-4xl font-serif text-stone-900 italic leading-tight">Modération des Avis</h1>
+                <p className="text-xs md:text-sm text-stone-500 font-light">Gérez les témoignages de vos clients avant leur publication.</p>
             </div>
 
             {/* Pending Reviews */}
@@ -91,44 +91,44 @@ function ReviewCard({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className={cn(
-                "p-6 rounded-2xl border transition-all",
-                isPending ? "bg-amber-50/30 border-amber-100 shadow-sm" : "bg-white border-stone-100"
+                "p-5 md:p-8 rounded-[2rem] border transition-all",
+                isPending ? "bg-amber-50/20 border-amber-100 shadow-sm" : "bg-white border-stone-100"
             )}
         >
-            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+            <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
                 <div className="flex-1 space-y-4">
-                    <div className="flex items-center justify-between md:justify-start md:gap-4">
-                        <h3 className="font-serif text-lg text-stone-900">{review.name}</h3>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between sm:justify-start sm:gap-4 gap-2">
+                        <h3 className="font-serif text-lg md:text-xl text-stone-900 italic">{review.name}</h3>
                         <div className="flex gap-0.5">
                             {[...Array(5)].map((_, i) => (
                                 <Star 
                                     key={i} 
-                                    size={12} 
-                                    className={cn(i < review.rating ? "fill-[#B08D57] text-[#B08D57]" : "text-stone-200")} 
+                                    size={14} 
+                                    className={cn(i < review.rating ? "fill-[#B08D57] text-[#B08D57]" : "text-stone-100")} 
                                 />
                             ))}
                         </div>
                     </div>
-                    <p className="text-stone-600 text-sm italic leading-relaxed">
+                    <p className="text-stone-600 text-sm italic leading-relaxed md:text-base">
                         "{review.text}"
                     </p>
-                    <div className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">
+                    <div className="text-[9px] uppercase tracking-widest text-stone-300 font-black">
                         {new Date(review.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
                 </div>
 
-                <div className="flex md:flex-col gap-2">
+                <div className="flex sm:flex-row lg:flex-col gap-2 pt-4 lg:pt-0 border-t lg:border-t-0 border-stone-50">
                     {onApprove && (
                         <button
                             onClick={onApprove}
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-colors shadow-sm"
+                            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-stone-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#B08D57] transition-all shadow-lg shadow-stone-900/10"
                         >
                             <Check size={14} /> Approuver
                         </button>
                     )}
                     <button
                         onClick={onDelete}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-rose-100 text-rose-500 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-50 transition-colors"
+                        className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-white border border-rose-100 text-rose-500 rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-rose-50 transition-all font-bold"
                     >
                         <Trash2 size={14} /> {isPending ? "Rejeter" : "Supprimer"}
                     </button>

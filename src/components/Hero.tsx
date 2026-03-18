@@ -16,19 +16,7 @@ export function Hero() {
                 />
                 <div className="absolute inset-0 bg-white/90 backdrop-blur-[2px]" />
             </div>
-
             <div className="container mx-auto px-6 flex flex-col items-center text-center relative z-10 py-20 gap-8">
-                {/* PI Monogram - Beige CFC4AC */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1 }}
-                    style={{ fontFamily: 'var(--font-serif)', color: '#CFC4AC' }}
-                    className="text-7xl md:text-9xl mb-2 drop-shadow-sm"
-                >
-                    PI
-                </motion.div>
-
                 {/* Brand Name - Brun 805836 */}
                 <motion.div
                     initial={{ opacity: 0, y: 15 }}
@@ -52,7 +40,7 @@ export function Hero() {
                     </span>
                 </motion.div>
 
-                {/* Slogan & CFC */}
+                {/* Slogan & Certification */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -67,7 +55,7 @@ export function Hero() {
                             style={{ color: '#805836', borderColor: '#80583640' }}
                             className="inline-block px-6 py-2 border rounded-full text-[10px] uppercase tracking-[0.4em] font-black bg-white/50 backdrop-blur-sm"
                         >
-                            Diplômée d'un CFC
+                            Esthéticienne diplômée
                         </span>
                     </div>
                 </motion.div>

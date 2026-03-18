@@ -35,6 +35,11 @@ export function useGallery() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!db) {
+            setLoading(false);
+            return;
+        }
+
         const q = query(collection(db, "gallery"));
         const unsubscribe = onSnapshot(q, (snap) => {
             if (snap.empty) {
@@ -58,6 +63,7 @@ export function useGallery() {
     const updateGallery = async (updated: GalleryImage[]) => {
         setImages(updated);
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             for (const img of updated) {
                 await setDoc(doc(db, "gallery", img.id), img);
             }

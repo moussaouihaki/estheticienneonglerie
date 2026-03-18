@@ -33,6 +33,11 @@ export function useClients() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!db) {
+            setLoading(false);
+            return;
+        }
+
         const q = query(collection(db, COLLECTION_NAME), orderBy("name", "asc"));
         const unsubscribe = onSnapshot(q, (snap) => {
             const cloudClients = snap.docs.map(doc => ({
@@ -51,6 +56,7 @@ export function useClients() {
 
     const addClient = async (newClient: Omit<Client, "id">) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             await addDoc(collection(db, COLLECTION_NAME), newClient);
         } catch (e) {
             console.error("Error adding client:", e);
@@ -59,6 +65,7 @@ export function useClients() {
 
     const updateClient = async (id: string, updates: Partial<Client>) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             await setDoc(doc(db, COLLECTION_NAME, id), updates, { merge: true });
         } catch (e) {
             console.error("Error updating client:", e);
@@ -67,6 +74,7 @@ export function useClients() {
 
     const deleteClient = async (id: string) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             await deleteDoc(doc(db, COLLECTION_NAME, id));
         } catch (e) {
             console.error("Error deleting client:", e);

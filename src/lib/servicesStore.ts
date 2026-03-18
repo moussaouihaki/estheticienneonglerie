@@ -45,11 +45,14 @@ export function useServices() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!db) {
+            setLoading(false);
+            return;
+        }
+
         const q = query(collection(db, "services"));
         const unsubscribe = onSnapshot(q, (snap) => {
             if (snap.empty) {
-                // If cloud is empty, we don't overwrite if we already have local data, 
-                // but let's just use defaults for now if nothing exists in cloud.
                 setServices(DEFAULT_SERVICES);
             } else {
                 const cloudServices = snap.docs.map(doc => ({
@@ -70,8 +73,7 @@ export function useServices() {
     const update = async (updated: Service[]) => {
         setServices(updated);
         try {
-            // Updating multiple docs (simpler here to just loop or use a batch)
-            // For simplicity in this nails studio where services are few:
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             for (const s of updated) {
                 await setDoc(doc(db, "services", s.id), s);
             }

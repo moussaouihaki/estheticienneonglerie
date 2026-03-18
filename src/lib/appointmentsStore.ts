@@ -40,6 +40,11 @@ export const useAppointments = create<AppointmentsState>((set) => ({
     loading: true,
 
     init: () => {
+        if (!db) {
+            set({ loading: false });
+            return () => {};
+        }
+
         const q = query(collection(db, "appointments"), orderBy("date", "asc"));
         const unsubscribe = onSnapshot(q, (snap) => {
             const appts = snap.docs.map(doc => ({
@@ -56,6 +61,7 @@ export const useAppointments = create<AppointmentsState>((set) => ({
 
     addAppointment: async (data) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             await addDoc(collection(db, "appointments"), {
                 ...data,
                 status: 'pending',
@@ -68,6 +74,7 @@ export const useAppointments = create<AppointmentsState>((set) => ({
 
     updateStatus: async (id, status) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             const docRef = doc(db, "appointments", id);
             await updateDoc(docRef, { status });
         } catch (e) {
@@ -77,6 +84,7 @@ export const useAppointments = create<AppointmentsState>((set) => ({
 
     deleteAppointment: async (id) => {
         try {
+            if (!db) throw new Error("Firebase Service 'db' uninitialized");
             await deleteDoc(doc(db, "appointments", id));
         } catch (e) {
             console.error("Error deleting appointment:", e);

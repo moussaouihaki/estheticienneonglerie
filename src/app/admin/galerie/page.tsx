@@ -69,25 +69,27 @@ export default function GaleriePage() {
         <div className="space-y-8">
 
             {/* Header stats */}
-            <div className="flex items-center gap-6">
-                <div className="px-6 py-4 bg-white border border-stone-100 rounded-2xl shadow-sm">
-                    <p className="text-[9px] uppercase tracking-widest text-stone-400 font-black">Total photos</p>
-                    <p className="text-2xl font-serif text-stone-900">{images.length}</p>
-                </div>
-                <div className="px-6 py-4 bg-white border border-stone-100 rounded-2xl shadow-sm">
-                    <p className="text-[9px] uppercase tracking-widest text-stone-400 font-black">Visibles sur le site</p>
-                    <p className="text-2xl font-serif text-emerald-600">{visible}</p>
-                </div>
-                <div className="px-6 py-4 bg-white border border-stone-100 rounded-2xl shadow-sm">
-                    <p className="text-[9px] uppercase tracking-widest text-stone-400 font-black">Masquées</p>
-                    <p className="text-2xl font-serif text-stone-400">{images.length - visible}</p>
+            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+                <div className="flex-1 grid grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="px-5 py-4 bg-white border border-stone-100 rounded-2xl shadow-sm">
+                        <p className="text-[8px] md:text-[9px] uppercase tracking-widest text-stone-400 font-black">Photos</p>
+                        <p className="text-xl md:text-2xl font-serif text-stone-900">{images.length}</p>
+                    </div>
+                    <div className="px-5 py-4 bg-white border border-stone-100 rounded-2xl shadow-sm">
+                        <p className="text-[8px] md:text-[9px] uppercase tracking-widest text-stone-400 font-black">Visibles</p>
+                        <p className="text-xl md:text-2xl font-serif text-[#B08D57]">{visible}</p>
+                    </div>
+                    <div className="hidden lg:block px-5 py-4 bg-white border border-stone-100 rounded-2xl shadow-sm">
+                        <p className="text-[9px] uppercase tracking-widest text-stone-400 font-black">Masquées</p>
+                        <p className="text-2xl font-serif text-stone-400">{images.length - visible}</p>
+                    </div>
                 </div>
 
-                <div className="ml-auto">
+                <div className="md:ml-auto">
                     <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
                     <button
                         onClick={() => fileRef.current?.click()}
-                        className="flex items-center gap-2 px-6 py-3 bg-stone-950 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#B08D57] transition-all"
+                        className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-4 bg-stone-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#B08D57] transition-all shadow-xl shadow-stone-900/10"
                     >
                         <Upload size={14} /> Ajouter une photo
                     </button>
@@ -95,15 +97,15 @@ export default function GaleriePage() {
             </div>
 
             {/* Filter tabs */}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
                 {["Tous", ...TAGS].map(tag => (
                     <button
                         key={tag}
                         onClick={() => setFilter(tag)}
                         className={cn(
-                            "px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-all border",
+                            "px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-widest transition-all border whitespace-nowrap",
                             filter === tag
-                                ? "bg-stone-950 text-white border-stone-950"
+                                ? "bg-stone-900 text-white border-stone-900 shadow-md"
                                 : "bg-white text-stone-400 border-stone-100 hover:border-stone-300"
                         )}
                     >
