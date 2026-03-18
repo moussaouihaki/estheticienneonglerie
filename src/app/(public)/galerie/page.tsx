@@ -2,7 +2,7 @@ import { Portfolio } from "@/components/Portfolio";
 
 export default function GaleriePage() {
     return (
-        <div className="pt-24 min-h-screen bg-white">
+        <div className="pt-24 min-h-screen bg-background">
             <Portfolio />
         </div>
     );

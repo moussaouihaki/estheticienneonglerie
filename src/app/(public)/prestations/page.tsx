@@ -31,7 +31,7 @@ export default function PrestationsPage() {
     );
 
     return (
-        <div className="min-h-screen bg-white pt-28 pb-24 px-6 relative overflow-hidden">
+        <div className="min-h-screen bg-background pt-28 pb-24 px-6 relative overflow-hidden">
 
             <div className="max-w-3xl mx-auto relative z-10">
 

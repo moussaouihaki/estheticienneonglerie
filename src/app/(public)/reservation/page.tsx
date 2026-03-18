@@ -22,7 +22,7 @@ export default function ReservationPage() {
         : "";
 
     return (
-        <div className="pt-24 min-h-screen bg-white">
+        <div className="pt-24 min-h-screen bg-background">
             <div className="max-w-7xl mx-auto px-6 py-20 text-center">
                 <span className="text-accent text-xs font-semibold uppercase tracking-[0.4em] block mb-4">Réservation</span>
                 <h1 className="text-6xl md:text-8xl font-serif mb-8 italic">Réserver l'Expérience</h1>
