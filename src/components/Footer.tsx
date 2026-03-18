@@ -23,13 +23,7 @@ export function Footer() {
                             style={{ color: '#805836' }}
                             className="font-serif text-3xl tracking-wide"
                         >
-                            Palma Institut
-                        </span>
-                        <span 
-                            style={{ fontFamily: 'var(--font-caps)', color: '#000000', letterSpacing: '0.4em' }}
-                            className="text-[10px] uppercase ml-1"
-                        >
-                            Beauty Salon
+                            Onaha
                         </span>
                     </div>
 
