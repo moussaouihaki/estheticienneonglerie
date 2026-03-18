@@ -76,6 +76,7 @@ export const useAppointments = create<AppointmentsState>((set) => ({
             const settings = await getSiteSettings();
             const studioName = settings.studioName || "Palma Institut";
             const cancelUrl = `${window.location.origin}/annuler-rdv/${apptRef.id}`;
+            const logoUrl = settings.logo.startsWith('http') ? settings.logo : `${window.location.origin}${settings.logo}`;
             
             await fetch("/api/send-email", {
                 method: "POST",
@@ -86,7 +87,7 @@ export const useAppointments = create<AppointmentsState>((set) => ({
                     html: `
                         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1c1917;">
                             <div style="text-align: center; padding: 40px 0;">
-                                <h1 style="font-family: serif; color: #805836; margin: 0; text-transform: uppercase; letter-spacing: 2px;">Palma Institut</h1>
+                                <img src="${logoUrl}" alt="${studioName}" style="height: 80px; width: auto; object-contain: contain;">
                             </div>
                             <div style="padding: 30px; border: 1px solid #f5f5f4; border-radius: 30px; background-color: #fafaf9;">
                                 <h2 style="font-size: 20px; color: #1c1917; margin-top: 0;">Bonjour ${data.client},</h2>
