@@ -21,7 +21,7 @@ export function Footer() {
                         <img 
                             src={settings.logo} 
                             alt={settings.studioName} 
-                            className="h-20 w-auto object-contain"
+                            className="h-40 w-auto object-contain"
                         />
 
                     <div className="flex items-center gap-4">
