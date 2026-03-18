@@ -34,6 +34,10 @@ export const viewport = {
 export const metadata: Metadata = {
   title: "Palma Institut | Beauty Salon & Prothésie Ongulaire",
   description: "Découvrez l'élégance et le savoir-faire de Palma Institut à La Chaux-de-Fonds. Prothésie ongulaire, gel, acrygel et nail art dans une ambiance chaleureuse.",
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 export default function RootLayout({

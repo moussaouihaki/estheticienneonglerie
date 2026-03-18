@@ -37,10 +37,10 @@ export default function Hero() {
 
                 {/* Slogan & Certification */}
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 0.6 }}
-                    className="space-y-6"
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                    className="text-center mt-2 md:mt-4 space-y-8"
                 >
                     <p className="text-xl md:text-3xl font-serif text-stone-500 italic font-light">
                         "Votre parenthèse beauté"
