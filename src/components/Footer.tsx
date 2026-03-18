@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, Lock, Instagram } from "lucide-react";
+import { Lock, Instagram } from "lucide-react";
 import { useSiteSettings } from "@/lib/siteSettingsStore";
 
 export function Footer() {
@@ -54,24 +54,29 @@ export function Footer() {
                         <Link href="/avis" className="text-[10px] uppercase tracking-widest text-stone-400 hover:text-accent-dark transition-colors font-bold">Avis Clients</Link>
                     </div>
 
-                    <div className="flex flex-col items-center md:items-end gap-3 text-xs font-light text-stone-500 tracking-wide">
-                        <div className="flex items-center gap-1">
-                            © {currentYear} {settings.studioName}. Fait avec  
-                            <Heart size={14} className="text-secondary fill-accent animate-pulse mx-1" /> 
-                            pour Elisa Palma.
-                        </div>
-                        <p className="text-[10px] text-stone-400 italic font-medium uppercase tracking-widest border-t border-accent/5 pt-3">
-                            La Chaux-de-Fonds, Suisse
+                    <div className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-accent/10 gap-6 w-full mt-10">
+                        <p className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">
+                            &copy; {currentYear} {settings.studioName}.
                         </p>
-                        
-                        <Link
-                            href="/admin"
-                            className="bg-white text-stone-300 hover:text-accent-dark transition-all duration-500 mt-6 p-4 rounded-full shadow-sm border border-accent/10 flex items-center justify-center group"
-                            title="Espace Administration"
-                        >
-                            <Lock size={14} className="group-hover:scale-110 transition-transform" />
-                        </Link>
+                        <p className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">
+                            Fait avec amour par <a href="https://syntalys.ch" target="_blank" rel="noopener noreferrer" className="hover:text-accent-dark transition-colors">Syntalys</a> pour Elisa Palma
+                        </p>
+                        <div className="flex items-center gap-8 text-[9px] uppercase tracking-[0.2em] text-stone-400 font-bold">
+                            <Link href="/mentions-legales" className="hover:text-stone-900 transition-colors">Légal</Link>
+                            <Link href="/politique-de-confidentialite" className="hover:text-stone-900 transition-colors">Confidentialité</Link>
+                            <Link
+                                href="/admin"
+                                className="text-stone-300 hover:text-accent-dark transition-all duration-500"
+                                title="Admin"
+                            >
+                                <Lock size={12} />
+                            </Link>
+                        </div>
                     </div>
+                    
+                    <p className="text-[10px] text-stone-400 italic font-medium uppercase tracking-widest pt-4">
+                        La Chaux-de-Fonds, Suisse
+                    </p>
                 </div>
 
             </div>
