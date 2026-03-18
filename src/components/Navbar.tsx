@@ -79,6 +79,17 @@ export function Navbar() {
                             <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#B08D57] transition-all duration-500 group-hover:w-full" />
                         </Link>
                     ))}
+                    {settings.instagram && (
+                        <a 
+                            href={settings.instagram} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="text-stone-900 hover:text-[#B08D57] transition-all duration-500 transform hover:scale-110"
+                            title="Suivez-nous sur Instagram"
+                        >
+                            <Instagram size={18} />
+                        </a>
+                    )}
                     <Link
                         href="/reservation"
                         className="px-8 py-4 bg-stone-900 text-white text-[9px] font-black uppercase tracking-[0.3em] hover:bg-[#B08D57] transition-all duration-700 rounded-full shadow-2xl"

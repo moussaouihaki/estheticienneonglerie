@@ -23,14 +23,6 @@ export function Footer() {
                         alt={settings.studioName} 
                         className="h-16 w-auto object-contain"
                     />
-
-                    <div className="flex items-center gap-4">
-                        {settings.instagram && (
-                            <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full border border-accent/10 flex items-center justify-center text-accent-dark hover:bg-accent hover:text-white hover:border-accent transition-all duration-300">
-                                <Instagram size={14} />
-                            </a>
-                        )}
-                    </div>
                 </div>
 
                 <div className="flex flex-col items-center md:items-end gap-4 text-center md:text-right">
