@@ -35,6 +35,8 @@ interface AppointmentsState {
     deleteAppointment: (id: string) => Promise<void>;
 }
 
+import { getSiteSettings } from "./siteSettingsStore";
+
 export const useAppointments = create<AppointmentsState>((set) => ({
     appointments: [],
     loading: true,
@@ -62,13 +64,59 @@ export const useAppointments = create<AppointmentsState>((set) => ({
     addAppointment: async (data) => {
         try {
             if (!db) throw new Error("Firebase Service 'db' uninitialized");
-            await addDoc(collection(db, "appointments"), {
+            
+            // 1. Create the appointment in Firestore
+            const apptRef = await addDoc(collection(db, "appointments"), {
                 ...data,
                 status: 'pending',
                 createdAt: serverTimestamp(),
             });
+
+            // 2. Send the confirmation email via our new API route
+            const settings = await getSiteSettings();
+            const studioName = settings.studioName || "Palma Institut";
+            const cancelUrl = `${window.location.origin}/annuler-rdv/${apptRef.id}`;
+            
+            await fetch("/api/send-email", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    to: data.email,
+                    subject: `Confirmation de réservation - ${studioName}`,
+                    html: `
+                        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1c1917;">
+                            <div style="text-align: center; padding: 40px 0;">
+                                <h1 style="font-family: serif; color: #805836; margin: 0; text-transform: uppercase; letter-spacing: 2px;">Palma Institut</h1>
+                            </div>
+                            <div style="padding: 30px; border: 1px solid #f5f5f4; border-radius: 30px; background-color: #fafaf9;">
+                                <h2 style="font-size: 20px; color: #1c1917; margin-top: 0;">Bonjour ${data.client},</h2>
+                                <p style="line-height: 1.6;">Votre demande de rendez-vous a été enregistrée avec succès. Voici les détails de votre prestation de prestige :</p>
+                                
+                                <div style="margin: 30px 0; border-left: 4px solid #CFC4AC; padding: 10px 25px; background-color: white; border-radius: 0 15px 15px 0;">
+                                    <p style="margin: 8px 0;"><b>Prestation :</b> ${data.service}</p>
+                                    <p style="margin: 8px 0;"><b>Date :</b> ${data.date}</p>
+                                    <p style="margin: 8px 0;"><b>Heure :</b> ${data.time}</p>
+                                </div>
+
+                                <p style="font-size: 13px; font-style: italic; color: #78716c; margin-bottom: 30px; background-color: #fef2f2; padding: 15px; border-radius: 10px;">
+                                    ⚠️ <b>Politique d'annulation :</b> Toute modification ou annulation doit être effectuée au moins <b>24h avant</b> l'heure du rendez-vous.
+                                </p>
+
+                                <div style="text-align: center;">
+                                    <a href="${cancelUrl}" style="display: inline-block; background-color: #1c1917; color: white; padding: 18px 30px; text-decoration: none; border-radius: 15px; font-weight: bold; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">
+                                        Gérer mon rendez-vous
+                                    </a>
+                                </div>
+                            </div>
+                            <div style="text-align: center; padding: 30px; font-size: 10px; color: #a8a29e; letter-spacing: 1px; text-transform: uppercase;">
+                                &copy; ${new Date().getFullYear()} ${studioName} • La Chaux-de-Fonds, Suisse
+                            </div>
+                        </div>
+                    `,
+                })
+            });
         } catch (e) {
-            console.error("Error adding appointment:", e);
+            console.error("Critical error in appointment process:", e);
         }
     },
 
