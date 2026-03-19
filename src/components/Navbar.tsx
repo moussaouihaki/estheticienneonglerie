@@ -40,25 +40,11 @@ export function Navbar() {
                 isScrolled ? "bg-background/95 backdrop-blur-2xl border-b border-stone-100 shadow-sm" : "bg-transparent"
             )}
         >
-            <div className="w-full max-w-[1800px] mx-auto flex items-center justify-between px-6 md:px-12">
+            <div className="w-full max-w-[1800px] mx-auto flex items-center px-6 md:px-12">
 
-                {/* Left Links (Desktop) */}
-                <div className="hidden lg:flex items-center space-x-12 flex-1">
-                    {navLinks.slice(0, 3).map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900/70 hover:text-stone-900 hover:italic transition-all relative group"
-                        >
-                            {link.name}
-                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent transition-all duration-500 group-hover:w-full" />
-                        </Link>
-                    ))}
-                </div>
-
-                {/* Brand Center */}
-                <div className="flex flex-col items-center flex-1 lg:flex-none">
-                    <Link href="/" className="group flex flex-col items-center">
+                {/* Left: Brand Logo */}
+                <div className="flex-1 flex justify-start">
+                    <Link href="/" className="group flex items-center">
                         <img
                             src={settings.logo}
                             alt="Palma Institut"
@@ -67,9 +53,9 @@ export function Navbar() {
                     </Link>
                 </div>
 
-                {/* Right Links & Action (Desktop) */}
-                <div className="hidden lg:flex items-center justify-end space-x-10 flex-1">
-                    {navLinks.slice(3).map((link) => (
+                {/* Center: Navigation Links */}
+                <div className="hidden lg:flex items-center justify-center space-x-10 flex-[2]">
+                    {navLinks.map((link) => (
                         <Link
                             key={link.name}
                             href={link.href}
@@ -79,13 +65,17 @@ export function Navbar() {
                             <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent transition-all duration-500 group-hover:w-full" />
                         </Link>
                     ))}
-                    <div className="h-4 w-px bg-stone-200 mx-2" />
                     <Link
-                        href="/login"
-                        className="text-[10px] uppercase tracking-[0.3em] font-black text-stone-900 hover:text-accent transition-all"
+                        href="/connexion"
+                        className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900/70 hover:text-stone-900 hover:italic transition-all relative group"
                     >
                         Connexion
+                        <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent transition-all duration-500 group-hover:w-full" />
                     </Link>
+                </div>
+
+                {/* Right: Action Button */}
+                <div className="hidden lg:flex items-center justify-end space-x-6 flex-1">
                     <Link
                         href="/reservation"
                         className="px-8 py-4 bg-stone-900 text-white text-[9px] font-black uppercase tracking-[0.3em] hover:bg-stone-800 transition-all duration-700 rounded-full shadow-2xl"
