@@ -20,20 +20,7 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px]" />
             </div>
             <div className="container mx-auto px-6 flex flex-col items-center text-center relative z-10 py-20 gap-10">
-                {/* Brand Logo */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                    className="flex flex-col items-center gap-1"
-                >
-                    <h1 className="sr-only">Palma Institut</h1>
-                    <img 
-                        src={settings.logo} 
-                        alt="Palma Institut" 
-                        className="w-[300px] md:w-[480px] h-auto object-contain mx-auto transition-transform duration-1000 group-hover:scale-105"
-                    />
-                </motion.div>
+
 
                 {/* Slogan & Certification */}
                 <motion.div
