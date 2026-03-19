@@ -13,19 +13,19 @@ const fadeUp = (delay = 0) => ({
 
 export default function AboutPage() {
     return (
-        <div className="min-h-screen pt-24 md:pt-32 pb-0 bg-background overflow-hidden relative">
+        <div className="min-h-screen pt-40 md:pt-60 pb-0 bg-background overflow-hidden relative">
             
             {/* Header - Large Brown Banner */}
             <div className="bg-accent py-32 px-6">
                 <div className="max-w-4xl mx-auto text-center">
                     <motion.span {...fadeUp(0)} className="text-[10px] uppercase tracking-[0.6em] text-white/60 font-black block mb-8">
-                        L'âme d'Aurelia Nails
+                        L'âme de Palma Institut
                     </motion.span>
                     <motion.h1 {...fadeUp(0.1)} className="text-5xl md:text-8xl font-serif text-white mb-8">
                         Je suis <span className="italic font-light opacity-80 text-white/40">Elisa</span>
                     </motion.h1>
                     <motion.p {...fadeUp(0.2)} className="text-white/70 font-sans text-lg max-w-2xl mx-auto leading-relaxed">
-                        Passionnée par l'art de la manucure et le bien-être, j'ai créé Aurelia Nails pour offrir un espace de douceur et d'excellence.
+                        Passionnée par l'art de la manucure et le bien-être, j'ai créé Palma Institut pour offrir un espace de douceur et d'excellence.
                     </motion.p>
                 </div>
             </div>
@@ -39,7 +39,7 @@ export default function AboutPage() {
                     >
                         <img 
                             src="/images/elisa.png" 
-                            alt="Elisa - Fondatrice de Aurelia Nails" 
+                            alt="Elisa - Fondatrice de Palma Institut" 
                             className="w-full h-full object-cover" 
                         />
                         <div className="absolute inset-0 bg-accent/10 pointer-events-none" />

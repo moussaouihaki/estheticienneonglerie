@@ -43,9 +43,9 @@ export function Footer() {
                         <ul className="space-y-4">
                             <li><Link href="/" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Accueil</Link></li>
                             <li><Link href="/prestations" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Prestations</Link></li>
-                            <li><Link href="/studio" className="text-[13px] text-stone-500 hover:text-accent transition-colors">À Propos</Link></li>
+                            <li><Link href="/a-propos" className="text-[13px] text-stone-500 hover:text-accent transition-colors">À Propos</Link></li>
                             <li><Link href="/galerie" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Galerie</Link></li>
-                            <li><Link href="/avis" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Avis Clients</Link></li>
+                            <li><Link href="/avis" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Avis</Link></li>
                         </ul>
                     </div>
 
@@ -57,11 +57,6 @@ export function Footer() {
                             <li><Link href="/politique-de-confidentialite" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Confidentialité</Link></li>
                             <li><Link href="/admin" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Espace Pro</Link></li>
                         </ul>
-                        <div className="pt-4 flex gap-4">
-                             {/* Fake App Store Badges style to match coredefemme */}
-                             <div className="h-8 w-24 bg-stone-900/5 rounded-md border border-stone-200 flex items-center justify-center text-[8px] font-bold text-stone-400">APP STORE</div>
-                             <div className="h-8 w-24 bg-stone-900/5 rounded-md border border-stone-200 flex items-center justify-center text-[8px] font-bold text-stone-400">PLAY STORE</div>
-                        </div>
                     </div>
 
                     {/* Column 4: Location */}

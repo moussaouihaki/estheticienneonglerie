@@ -42,14 +42,13 @@ export function Navbar() {
         >
             <div className="w-full max-w-[1800px] mx-auto flex items-center px-6 md:px-12 relative h-full">
 
-                {/* Left: Brand Logo (Protruding) */}
+                {/* Left: Brand Logo */}
                 <div className="flex-1 flex justify-start items-center h-full">
-                    <Link href="/" className="group flex items-center relative z-[120]">
+                    <Link href="/" className="group flex items-center relative z-[130] h-full">
                         <img
                             src={settings.logo}
-                            alt="Palma Institut"
-                            className="h-32 md:h-48 w-auto object-contain transition-all duration-700 group-hover:scale-105 origin-top-left drop-shadow-md"
-                            style={{ position: 'absolute', top: '50%', transform: 'translateY(-40%)' }}
+                            alt={settings.studioName}
+                            className="h-32 md:h-52 w-auto object-contain transition-all duration-700 group-hover:scale-105 drop-shadow-md absolute top-1/2 -translate-y-[40%] left-0"
                         />
                     </Link>
                 </div>

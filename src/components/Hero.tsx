@@ -37,8 +37,8 @@ export default function Hero() {
                     transition={{ duration: 1.2, ease: "easeOut" }}
                     className="text-6xl md:text-9xl font-serif text-white leading-[1.1] mb-12 drop-shadow-2xl"
                 >
-                    Aurelia <br />
-                    <span className="italic font-light opacity-60">Nails</span>
+                    Palma <br />
+                    <span className="italic font-light opacity-60">Institut</span>
                 </motion.h1>
 
                 <motion.p
