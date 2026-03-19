@@ -1,27 +1,26 @@
 import type { Metadata } from "next";
-import { Noto_Serif_Display, Outfit, Josefin_Sans } from "next/font/google";
+import { Montserrat, Lato } from "next/font/google";
 import "./globals.css";
 
-// "Palma Institut" + PI monogram font — as specified in notes
-const notoSerif = Noto_Serif_Display({
+// Heading font
+const montserrat = Montserrat({
   variable: "--font-serif",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
 });
 
 // Body text
-const outfit = Outfit({
+const lato = Lato({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["300", "400", "700"],
 });
 
-// "Beauty Salon" font — Glacial Indifference style (geometric, clean uppercase)
-const josefinSans = Josefin_Sans({
+// For specific geometric / caps elements
+const montserratCaps = Montserrat({
   variable: "--font-caps",
   subsets: ["latin"],
-  weight: ["300", "400", "600", "700"],
+  weight: ["400", "600", "700"],
 });
 
 export const viewport = {
@@ -48,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className="scroll-smooth" suppressHydrationWarning>
       <body
-        className={`${notoSerif.variable} ${outfit.variable} ${josefinSans.variable} font-sans antialiased bg-background text-foreground selection:bg-accent selection:text-white`}
+        className={`${montserrat.variable} ${lato.variable} ${montserratCaps.variable} font-sans antialiased bg-background text-foreground selection:bg-accent selection:text-white`}
       >
         {children}
       </body>
