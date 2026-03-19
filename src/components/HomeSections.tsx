@@ -129,7 +129,7 @@ export function ContactCTA() {
                     Prête à <span className="italic font-light opacity-60">commencer ?</span>
                 </motion.h2>
                 <motion.p {...fadeUp(0.3)} className="text-stone-400 font-sans text-lg max-w-2xl mx-auto mb-16 leading-relaxed">
-                    Réservez votre moment suspendu et laissez-vous porter par une expérience de soin unique à Tavannes.
+                    Réservez votre moment suspendu et laissez-vous porter par une expérience de soin unique à La Chaux-de-Fonds.
                 </motion.p>
                 
                 <motion.div 

@@ -55,7 +55,7 @@ export default function AboutPage() {
                                 Depuis toujours, j'accorde une importance capitale aux détails. Pour moi, une manucure n'est pas qu'un simple soin, c'est une forme d'expression de soi et un moment volé au tumulte du quotidien.
                             </p>
                             <p>
-                                Après plusieurs années de formation et de pratique, j'ai choisi de m'installer à Tavannes pour partager ma vision de la prothésie ongulaire : un mélange de technicité rigoureuse, d'hygiène irréprochable et de bienveillance sincère.
+                                Après plusieurs années de formation et de pratique, j'ai choisi de m'installer à La Chaux-de-Fonds pour partager ma vision de la prothésie ongulaire : un mélange de technicité rigoureuse, d'hygiène irréprochable et de bienveillance sincère.
                             </p>
                             <p>
                                 Mon objectif ? Que chaque cliente reparte non seulement avec des ongles parfaits, mais aussi avec le sentiment d'avoir été écoutée et choyée.

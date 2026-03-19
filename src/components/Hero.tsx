@@ -47,7 +47,7 @@ export default function Hero() {
                     transition={{ duration: 1.5, delay: 0.5 }}
                     className="text-white/80 font-sans text-lg md:text-xl max-w-2xl mb-16 leading-relaxed"
                 >
-                    L'excellence du soin et l'art de la précision au service de votre beauté, dans un écrin de douceur à Tavannes.
+                    L'excellence du soin et l'art de la précision au service de votre beauté, dans un écrin de douceur à La Chaux-de-Fonds.
                 </motion.p>
 
                 {/* CTAs */}
