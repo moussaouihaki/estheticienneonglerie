@@ -36,19 +36,20 @@ export function Navbar() {
     return (
         <nav
             className={cn(
-                "fixed top-0 left-0 right-0 z-[110] transition-all duration-700 h-40 md:h-56 flex items-center",
+                "fixed top-0 left-0 right-0 z-[110] transition-all duration-700 h-24 md:h-28 flex items-center",
                 isScrolled ? "bg-white/95 backdrop-blur-2xl border-b border-stone-100 shadow-sm" : "bg-transparent"
             )}
         >
-            <div className="w-full max-w-[1800px] mx-auto flex items-center px-6 md:px-12">
+            <div className="w-full max-w-[1800px] mx-auto flex items-center px-6 md:px-12 relative h-full">
 
-                {/* Left: Brand Logo */}
-                <div className="flex-1 flex justify-start">
-                    <Link href="/" className="group flex items-center">
+                {/* Left: Brand Logo (Protruding) */}
+                <div className="flex-1 flex justify-start items-center h-full">
+                    <Link href="/" className="group flex items-center relative z-[120]">
                         <img
                             src={settings.logo}
                             alt="Palma Institut"
-                            className="h-32 md:h-44 w-auto object-contain transition-all duration-700 group-hover:scale-105"
+                            className="h-32 md:h-48 w-auto object-contain transition-all duration-700 group-hover:scale-105 origin-top-left drop-shadow-md"
+                            style={{ position: 'absolute', top: '50%', transform: 'translateY(-40%)' }}
                         />
                     </Link>
                 </div>
