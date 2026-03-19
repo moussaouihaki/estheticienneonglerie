@@ -17,29 +17,38 @@ export default function Hero() {
                     alt="Palma Institut Studio" 
                     className="w-full h-full object-cover opacity-60"
                 />
-                <div className="absolute inset-0 bg-background/40 backdrop-blur-[1px]" />
             </div>
-            <div className="container mx-auto px-6 flex flex-col items-center text-center relative z-10 py-20 gap-10">
-
-
-                {/* Slogan & Certification */}
-                <motion.div
-                    initial={{ opacity: 0, y: 15 }}
+            {/* Atmospheric Overlay */}
+            <div className="absolute inset-0 z-[5] bg-stone-900/40 backdrop-blur-[2px]" />
+            
+            <div className="relative z-10 w-full max-w-5xl mx-auto px-6 flex flex-col items-center text-center">
+                <motion.span
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1, delay: 0.4 }}
-                    className="text-center space-y-8"
+                    transition={{ duration: 1 }}
+                    className="text-[10px] md:text-[12px] uppercase tracking-[0.6em] text-white/80 font-black mb-8 block lg:mb-12"
                 >
-                    <p className="text-xl md:text-2xl font-serif text-stone-600/80 italic font-light tracking-wide">
-                        "Votre parenthèse beauté au cœur de la ville"
-                    </p>
-                    <div className="pt-2">
-                        <span 
-                            className="inline-block px-10 py-3 border border-stone-300 rounded-full text-[9px] uppercase tracking-[0.5em] font-black bg-white/30 backdrop-blur-md text-stone-800"
-                        >
-                            Esthéticienne diplômée
-                        </span>
-                    </div>
-                </motion.div>
+                    Studio de Prothésie Ongulaire
+                </motion.span>
+                
+                <motion.h1
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 1.2, ease: "easeOut" }}
+                    className="text-6xl md:text-9xl font-serif text-white leading-[1.1] mb-12 drop-shadow-2xl"
+                >
+                    Aurelia <br />
+                    <span className="italic font-light opacity-60">Nails</span>
+                </motion.h1>
+
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1.5, delay: 0.5 }}
+                    className="text-white/80 font-sans text-lg md:text-xl max-w-2xl mb-16 leading-relaxed"
+                >
+                    L'excellence du soin et l'art de la précision au service de votre beauté, dans un écrin de douceur à Tavannes.
+                </motion.p>
 
                 {/* CTAs */}
                 <motion.div
@@ -58,7 +67,7 @@ export default function Hero() {
 
                     <Link
                         href="/prestations"
-                        className="group relative px-16 py-6 border border-stone-300 text-stone-900 text-[10px] uppercase tracking-[0.4em] font-black rounded-full transition-all hover:bg-white/50 hover:border-stone-900 active:scale-95"
+                        className="group relative px-16 py-6 border border-white/30 backdrop-blur-md text-white text-[10px] uppercase tracking-[0.4em] font-black rounded-full transition-all hover:bg-white/10 hover:border-white active:scale-95"
                     >
                         Les Prestations
                     </Link>

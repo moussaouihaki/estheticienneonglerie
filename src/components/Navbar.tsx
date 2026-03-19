@@ -15,9 +15,9 @@ function cn(...inputs: ClassValue[]) {
 const navLinks = [
     { name: "Accueil", href: "/" },
     { name: "Prestations", href: "/prestations" },
-    { name: "À Propos", href: "/studio" },
+    { name: "À Propos", href: "/a-propos" },
     { name: "Galerie", href: "/galerie" },
-    { name: "Avis Clients", href: "/avis" },
+    { name: "Avis", href: "/avis" },
 ];
 
 export function Navbar() {
