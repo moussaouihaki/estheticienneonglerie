@@ -31,7 +31,7 @@ export default function PrestationsPage() {
     );
 
     return (
-        <div className="min-h-screen pt-28 pb-0 relative overflow-hidden">
+        <div className="min-h-screen pt-32 md:pt-40 pb-0 relative overflow-hidden">
 
             {/* Header - Beige */}
             <div className="bg-background py-20 px-6">

@@ -36,8 +36,8 @@ export function Navbar() {
     return (
         <nav
             className={cn(
-                "fixed top-0 left-0 right-0 z-[110] transition-all duration-700 h-20 md:h-24 flex items-center",
-                isScrolled ? "bg-background/95 backdrop-blur-2xl border-b border-stone-100 shadow-sm" : "bg-transparent"
+                "fixed top-0 left-0 right-0 z-[110] transition-all duration-700 h-24 md:h-32 flex items-center",
+                isScrolled ? "bg-white/95 backdrop-blur-2xl border-b border-stone-100 shadow-sm" : "bg-transparent"
             )}
         >
             <div className="w-full max-w-[1800px] mx-auto flex items-center px-6 md:px-12">
@@ -48,7 +48,7 @@ export function Navbar() {
                         <img
                             src={settings.logo}
                             alt="Palma Institut"
-                            className="h-10 md:h-14 w-auto object-contain transition-all duration-700 group-hover:scale-105"
+                            className="h-14 md:h-20 w-auto object-contain transition-all duration-700 group-hover:scale-105"
                         />
                     </Link>
                 </div>
