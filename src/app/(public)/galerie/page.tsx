@@ -1,3 +1,5 @@
+"use client";
+
 import { Portfolio } from "@/components/Portfolio";
 import { motion } from "framer-motion";
 
