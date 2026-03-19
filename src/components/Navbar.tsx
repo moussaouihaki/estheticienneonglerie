@@ -37,7 +37,7 @@ export function Navbar() {
         <nav
             className={cn(
                 "fixed top-0 left-0 right-0 z-[110] transition-all duration-700 h-20 md:h-24 flex items-center",
-                isScrolled ? "bg-white/95 backdrop-blur-2xl border-b border-stone-100 shadow-sm" : "bg-transparent"
+                isScrolled ? "bg-background/95 backdrop-blur-2xl border-b border-stone-100 shadow-sm" : "bg-transparent"
             )}
         >
             <div className="w-full max-w-[1800px] mx-auto flex items-center justify-between px-6 md:px-12">
@@ -111,7 +111,7 @@ export function Navbar() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: "-100%" }}
                         transition={{ type: "spring", damping: 30, stiffness: 150 }}
-                        className="fixed inset-0 bg-white z-[150] lg:hidden flex flex-col p-12 text-center"
+                        className="fixed inset-0 bg-background z-[150] lg:hidden flex flex-col p-12 text-center"
                     >
                         <div className="flex flex-col items-center justify-center flex-1 space-y-10">
                             <Sparkles className="text-[#B08D57]/20 mb-4" size={48} strokeWidth={1} />
