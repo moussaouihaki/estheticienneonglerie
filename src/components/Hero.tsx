@@ -46,23 +46,21 @@ export default function Hero() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 1, delay: 0.8 }}
-                    className="flex flex-col md:flex-row gap-8 items-center pt-6"
+                    className="flex flex-col md:flex-row gap-6 items-center pt-6"
                 >
                     <Link
                         href="/reservation"
-                        className="group relative px-16 py-6 bg-stone-900 text-white text-[10px] uppercase tracking-[0.5em] font-black overflow-hidden rounded-full shadow-lg transition-all hover:bg-stone-800 hover:shadow-xl active:scale-95"
+                        className="group relative px-16 py-6 bg-accent text-white text-[10px] uppercase tracking-[0.4em] font-black overflow-hidden rounded-full shadow-2xl transition-all hover:bg-stone-900 hover:shadow-xl active:scale-95 flex items-center gap-3"
                     >
-                        Réserver
+                        Réserver un moment
+                        <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform duration-500" />
                     </Link>
 
                     <Link
                         href="/prestations"
-                        className="group flex items-center gap-6 text-[10px] uppercase tracking-[0.5em] font-black text-stone-800 relative"
+                        className="group relative px-16 py-6 border border-stone-300 text-stone-900 text-[10px] uppercase tracking-[0.4em] font-black rounded-full transition-all hover:bg-white/50 hover:border-stone-900 active:scale-95"
                     >
-                        <span className="relative">
-                            Découvrir
-                            <span className="absolute -bottom-2 left-0 w-0 h-[1.5px] bg-stone-800 transition-all duration-500 group-hover:w-full" />
-                        </span>
+                        Les Prestations
                     </Link>
                 </motion.div>
             </div>
