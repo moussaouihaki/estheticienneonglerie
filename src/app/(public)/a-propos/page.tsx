@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Check, ShieldCheck, Heart, Sparkles, Award, Clock } from "lucide-react";
 import Link from "next/link";
+import { useSiteSettings } from "@/lib/siteSettingsStore";
 
 const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 30 },
@@ -12,6 +13,8 @@ const fadeUp = (delay = 0) => ({
 });
 
 export default function AboutPage() {
+    const { settings } = useSiteSettings();
+
     return (
         <div className="min-h-screen pt-40 md:pt-60 pb-0 bg-background overflow-hidden relative">
             
@@ -19,13 +22,13 @@ export default function AboutPage() {
             <div className="bg-accent py-32 px-6">
                 <div className="max-w-4xl mx-auto text-center">
                     <motion.span {...fadeUp(0)} className="text-[10px] uppercase tracking-[0.6em] text-white/60 font-black block mb-8">
-                        L'âme de Palma Institut
+                        L'âme de {settings.studioName}
                     </motion.span>
                     <motion.h1 {...fadeUp(0.1)} className="text-5xl md:text-8xl font-serif text-white mb-8">
                         Je suis <span className="italic font-light opacity-80 text-white/40">Elisa</span>
                     </motion.h1>
                     <motion.p {...fadeUp(0.2)} className="text-white/70 font-sans text-lg max-w-2xl mx-auto leading-relaxed">
-                        Passionnée par l'art de la manucure et le bien-être, j'ai créé Palma Institut pour offrir un espace de douceur et d'excellence.
+                        Passionnée par l'art de la manucure et le bien-être, j'ai créé {settings.studioName} pour offrir un espace de douceur et d'excellence.
                     </motion.p>
                 </div>
             </div>
@@ -38,8 +41,8 @@ export default function AboutPage() {
                         className="relative w-full md:w-1/2 aspect-square rounded-[3rem] overflow-hidden shadow-2xl"
                     >
                         <img 
-                            src="/images/elisa.png" 
-                            alt="Elisa - Fondatrice de Palma Institut" 
+                            src={settings.aboutImage || "/images/elisa.png"} 
+                            alt={`Elisa - Fondatrice de ${settings.studioName}`} 
                             className="w-full h-full object-cover" 
                         />
                         <div className="absolute inset-0 bg-accent/10 pointer-events-none" />

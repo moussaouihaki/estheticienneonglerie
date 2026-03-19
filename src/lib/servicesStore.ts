@@ -25,17 +25,19 @@ export type Service = {
 
 // ─── Default services ─────────────────────────────────────────────────────────
 const DEFAULT_SERVICES: Service[] = [
-    { id: "gel-s", name: "GEL — Taille S", description: "Pose complète en gel. Taille S.", duration: 90, price: 75, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
-    { id: "gel-m", name: "GEL — Taille M", description: "Pose complète en gel. Taille M.", duration: 90, price: 80, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
-    { id: "gel-l", name: "GEL — Taille L", description: "Pose complète en gel. Taille L.", duration: 105, price: 85, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
-    { id: "gel-xl", name: "GEL — Taille XL", description: "Pose complète en gel. Taille XL.", duration: 120, price: 90, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
-    { id: "acrygel-s", name: "ACRYGEL — Taille S", description: "Pose complète en acrygel. Taille S.", duration: 105, price: 80, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
-    { id: "acrygel-m", name: "ACRYGEL — Taille M", description: "Pose complète en acrygel. Taille M.", duration: 105, price: 85, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
-    { id: "acrygel-l", name: "ACRYGEL — Taille L", description: "Pose complète en acrygel. Taille L.", duration: 120, price: 90, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
-    { id: "acrygel-xl", name: "ACRYGEL — Taille XL", description: "Pose complète en acrygel. Taille XL.", duration: 135, price: 95, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
-    { id: "remplissage", name: "Remplissage", description: "Entretien de votre pose, max 4 semaines.", duration: 60, price: 45, color: "#CFC4AC", icon: "💅", image: "/images/services/fill.png", visible: true },
-    { id: "nail-art", name: "Nail Art", description: "Décorations personnalisées pour vos ongles.", duration: 30, price: 5, color: "#805836", icon: "🎨", image: "/images/services/art.png", visible: true },
-    { id: "depose", name: "Dépose seul", description: "Retrait complet de la pose.", duration: 45, price: 15, color: "#000000", icon: "✂️", image: "/images/services/gel.png", visible: true }
+    { id: "gel-s", name: "GEL — Taille S", description: "Pose complète en gel. Taille S.", duration: 90, price: 80, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
+    { id: "gel-m", name: "GEL — Taille M", description: "Pose complète en gel. Taille M.", duration: 90, price: 90, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
+    { id: "gel-l", name: "GEL — Taille L", description: "Pose complète en gel. Taille L.", duration: 105, price: 100, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
+    { id: "gel-xl", name: "GEL — Taille XL", description: "Pose complète en gel. Taille XL.", duration: 120, price: 110, color: "#CFC4AC", icon: "✨", image: "/images/services/gel.png", visible: true },
+    { id: "acrygel-s", name: "ACRYGEL — Taille S", description: "Pose complète en acrygel. Taille S.", duration: 105, price: 90, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
+    { id: "acrygel-m", name: "ACRYGEL — Taille M", description: "Pose complète en acrygel. Taille M.", duration: 105, price: 100, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
+    { id: "acrygel-l", name: "ACRYGEL — Taille L", description: "Pose complète en acrygel. Taille L.", duration: 120, price: 110, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
+    { id: "acrygel-xl", name: "ACRYGEL — Taille XL", description: "Pose complète en acrygel. Taille XL.", duration: 135, price: 120, color: "#805836", icon: "💎", image: "/images/services/acrygel.png", visible: true },
+    { id: "remplissage-gel", name: "Remplissage Gel", description: "Entretien de votre pose gel, max 4 semaines.", duration: 90, price: 70, color: "#CFC4AC", icon: "💅", image: "/images/services/fill.png", visible: true },
+    { id: "remplissage-acrygel", name: "Remplissage Acrygel", description: "Entretien de votre pose acrygel, max 4 semaines.", duration: 105, price: 80, color: "#805836", icon: "💎", image: "/images/services/fill.png", visible: true },
+    { id: "manucure-russe", name: "Manucure Russe", description: "Travail approfondi des cuticules pour un contour parfait.", duration: 60, price: 50, color: "#CFC4AC", icon: "🧖‍♀️", image: "/images/services/soin.png", visible: true },
+    { id: "nail-art", name: "Nail Art", description: "Décorations personnalisées (prix par ongle).", duration: 15, price: 10, color: "#805836", icon: "🎨", image: "/images/services/art.png", visible: true },
+    { id: "depose", name: "Dépose seul", description: "Retrait complet de la pose et soin durcisseur.", duration: 45, price: 30, color: "#000000", icon: "✂️", image: "/images/services/gel.png", visible: true }
 ];
 
 const STORAGE_KEY = "palma_services";

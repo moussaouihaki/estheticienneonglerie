@@ -17,6 +17,7 @@ export default function SettingsPage() {
     const { hours, updateDay, loading: hoursLoading } = useBusinessHours();
     const heroFileRef = useRef<HTMLInputElement>(null);
     const logoFileRef = useRef<HTMLInputElement>(null);
+    const aboutFileRef = useRef<HTMLInputElement>(null);
 
     const handleSave = () => {
         setSaved(true);
@@ -51,6 +52,17 @@ export default function SettingsPage() {
         reader.readAsDataURL(file);
     };
 
+    const handleAboutUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const result = event.target?.result as string;
+            updateSettings({ aboutImage: result });
+        };
+        reader.readAsDataURL(file);
+    };
+
     return (
         <div className="max-w-4xl space-y-10 pb-24">
 
@@ -77,7 +89,20 @@ export default function SettingsPage() {
                                 <Plus size={32} className="text-stone-900" />
                             </div>
                         </div>
-                        <p className="text-[7px] uppercase tracking-widest text-stone-300 font-bold text-center">Image de fond (Hero)</p>
+                        <p className="text-[7px] uppercase tracking-widest text-stone-300 font-bold text-center">Hero</p>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-4 w-full lg:w-44">
+                        <div
+                            onClick={() => aboutFileRef.current?.click()}
+                            className="w-full aspect-square rounded-[2rem] overflow-hidden border border-stone-200 shadow-xl bg-stone-50 relative group cursor-pointer"
+                        >
+                            <img src={settings.aboutImage || "/images/elisa.png"} alt="About Preview" className="w-full h-full object-cover transition-opacity group-hover:opacity-40" />
+                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Plus size={32} className="text-stone-900" />
+                            </div>
+                        </div>
+                        <p className="text-[7px] uppercase tracking-widest text-stone-300 font-bold text-center">Photo Elisa</p>
                     </div>
 
                     <div className="flex flex-col items-center gap-4 w-full lg:w-44">
@@ -95,24 +120,31 @@ export default function SettingsPage() {
 
                     <div className="flex-1 space-y-5 pt-4">
                         <p className="text-xs md:text-sm text-stone-500 leading-relaxed font-light italic">
-                            "L'identité visuelle de votre studio est la première chose que vos clients verront. Assurez-vous d'utiliser un logo avec un fond transparent pour un rendu professionnel."
+                            "L'identité visuelle de votre studio est la première chose que vos clients verront. Assurez-vous d'utiliser une photo chaleureuse pour la section 'À Propos'."
                         </p>
                         <div className="flex flex-wrap gap-4">
                             <button
                                 onClick={() => heroFileRef.current?.click()}
                                 className="flex items-center justify-center gap-3 px-6 py-4 bg-stone-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#B08D57] transition-all shadow-xl shadow-stone-900/10"
                             >
-                                <Upload size={14} /> Changer Hero
+                                <Upload size={14} /> Hero
+                            </button>
+                            <button
+                                onClick={() => aboutFileRef.current?.click()}
+                                className="flex items-center justify-center gap-3 px-6 py-4 bg-stone-900 text-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-[#B08D57] transition-all shadow-xl shadow-stone-900/10"
+                            >
+                                <Upload size={14} /> Photo
                             </button>
                             <button
                                 onClick={() => logoFileRef.current?.click()}
                                 className="flex items-center justify-center gap-3 px-6 py-4 border border-stone-200 text-stone-700 bg-white rounded-2xl text-[9px] font-black uppercase tracking-widest hover:bg-stone-50 transition-all shadow-xl"
                             >
-                                <Upload size={14} /> Changer Logo
+                                <Upload size={14} /> Logo
                             </button>
                         </div>
                         <input ref={heroFileRef} type="file" accept="image/*" className="hidden" onChange={handleHeroUpload} />
                         <input ref={logoFileRef} type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                        <input ref={aboutFileRef} type="file" accept="image/*" className="hidden" onChange={handleAboutUpload} />
                     </div>
                 </div>
             </div>

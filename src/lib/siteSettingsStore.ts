@@ -15,6 +15,7 @@ export type SiteSettings = {
     address: string;
     instagram?: string;
     tiktok?: string;
+    aboutImage: string;
 };
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -28,6 +29,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
     address: "Rue du Progrès 99a, 2300 La Chaux-de-Fonds",
     instagram: "https://www.instagram.com/elisa_institut/",
     tiktok: "",
+    aboutImage: "/images/elisa.png",
 };
 
 const STORAGE_KEY = "palma_site_settings";
