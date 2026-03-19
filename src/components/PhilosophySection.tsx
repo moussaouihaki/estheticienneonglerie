@@ -15,7 +15,7 @@ export function PhilosophySection() {
                     <h2 
                         className="text-4xl md:text-5xl tracking-wide font-serif text-stone-900"
                     >
-                        Esthéticienne diplômée
+                        Une parenthèse de bien-être
                     </h2>
                     
                     <p 
