@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function PhilosophySection() {
     return (
-        <section className="bg-background/80 py-32 px-6 overflow-hidden relative">
+        <section className="bg-white py-32 px-6 overflow-hidden relative">
             <div className="max-w-4xl mx-auto text-center relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
