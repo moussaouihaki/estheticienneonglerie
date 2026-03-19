@@ -44,11 +44,11 @@ export function Navbar() {
 
                 {/* Left: Brand Logo */}
                 <div className="flex-1 flex justify-start items-center h-full">
-                    <Link href="/" className="group flex items-center relative z-[130] h-full">
+                    <Link href="/" className="group flex items-center relative z-[130]">
                         <img
-                            src={settings.logo}
+                            src={settings.logo || "/logo.png"}
                             alt={settings.studioName}
-                            className="h-32 md:h-52 w-auto object-contain transition-all duration-700 group-hover:scale-105 drop-shadow-md absolute top-1/2 -translate-y-[40%] left-0"
+                            className="h-24 md:h-44 w-auto object-contain transition-all duration-700 group-hover:scale-105 drop-shadow-md relative z-[140]"
                         />
                     </Link>
                 </div>
