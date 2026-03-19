@@ -9,6 +9,7 @@ export type SiteSettings = {
     heroImage: string;
     logo: string;
     studioName: string;
+    description: string;
     phone: string;
     email: string;
     address: string;
@@ -21,6 +22,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
     heroImage: "/images/hero.png",
     logo: "/logo.png",
     studioName: "Palma Institut",
+    description: "Votre studio de bien-être spécialisé dans l'onglerie et le soin de soi. Une expérience unique au cœur de la ville.",
     phone: "+41 76 369 72 07",
     email: "palmaelisa49@gmail.com",
     address: "Rue du Progrès 99a, 2300 La Chaux-de-Fonds",

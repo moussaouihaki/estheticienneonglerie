@@ -1,62 +1,97 @@
 "use client";
 
 import Link from "next/link";
-import { Lock, Instagram } from "lucide-react";
 import { useSiteSettings } from "@/lib/siteSettingsStore";
+import { Instagram, Phone, Mail, MapPin } from "lucide-react";
 
 export function Footer() {
     const { settings } = useSiteSettings();
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="py-20 px-6 bg-stone-900 text-stone-100 relative overflow-hidden">
-             {/* Subtle background element */}
-             <div className="absolute right-[-2%] bottom-[-2%] w-32 h-32 opacity-[0.02] rotate-12 pointer-events-none">
-                <img src={settings.logo} alt="" className="w-full h-full object-contain" />
-             </div>
-
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
-
-                <div className="flex flex-col items-center md:items-start gap-3">
-                    <img 
-                        src={settings.logo} 
-                        alt={settings.studioName} 
-                        className="h-16 w-auto object-contain"
-                    />
-                </div>
-
-                <div className="flex flex-col items-center md:items-end gap-4 text-center md:text-right">
-                    <div 
-                        className="flex flex-wrap justify-center md:justify-end gap-5 md:gap-8"
-                    >
-                        <Link href="/" className="text-[10px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors font-bold">Accueil</Link>
-                        <Link href="/prestations" className="text-[10px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors font-bold">Prestations</Link>
-                        <Link href="/studio" className="text-[10px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors font-bold">À propos</Link>
-                        <Link href="/galerie" className="text-[10px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors font-bold">Galerie</Link>
-                        <Link href="/avis" className="text-[10px] uppercase tracking-widest text-stone-400 hover:text-white transition-colors font-bold">Avis Clients</Link>
+        <footer className="bg-background py-24 px-6 border-t border-stone-200/50">
+            <div className="max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-20">
+                    
+                    {/* Column 1: Brand & Bio */}
+                    <div className="space-y-8">
+                        <Link href="/" className="inline-block">
+                            <img 
+                                src={settings.logo} 
+                                alt={settings.studioName} 
+                                className="h-20 w-auto object-contain"
+                            />
+                        </Link>
+                        <p className="text-[13px] text-stone-500 leading-relaxed max-w-[240px] font-sans">
+                            {settings.description || "Votre studio de bien-être spécialisé dans l'onglerie et le soin de soi. Une expérience unique au cœur de la ville."}
+                        </p>
+                        <div className="flex items-center gap-5">
+                            {settings.instagram && (
+                                <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full border border-stone-200 flex items-center justify-center text-stone-600 hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all">
+                                    <Instagram size={18} strokeWidth={1.5} />
+                                </a>
+                            )}
+                            <a href={`tel:${settings.phone}`} className="w-10 h-10 rounded-full border border-stone-200 flex items-center justify-center text-stone-600 hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-all">
+                                <Phone size={18} strokeWidth={1.5} />
+                            </a>
+                        </div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row items-center justify-between pt-10 border-t border-white/5 gap-8 w-full mt-4">
-                        <p className="text-[9px] uppercase tracking-[0.2em] text-stone-500 font-medium">
-                            &copy; {currentYear} {settings.studioName}.
-                        </p>
-                        <p className="text-[9px] uppercase tracking-[0.2em] text-stone-500 font-medium">
-                            Fait avec passion par <a href="https://syntalys.ch" target="_blank" rel="noopener noreferrer" className="text-stone-400 hover:text-white transition-colors underline decoration-stone-800 underline-offset-8">Syntalys</a>
-                        </p>
-                        <div className="flex items-center gap-8 text-[9px] uppercase tracking-[0.2em] text-stone-500 font-medium">
-                            <Link href="/mentions-legales" className="hover:text-white transition-colors">Légal</Link>
-                            <Link href="/politique-de-confidentialite" className="hover:text-white transition-colors">Confidentialité</Link>
-                            <Link
-                                href="/admin"
-                                className="text-stone-700 hover:text-white transition-all duration-300"
-                                title="Admin"
-                            >
-                                <Lock size={12} />
-                            </Link>
+                    {/* Column 2: Navigation */}
+                    <div className="space-y-8">
+                        <h4 className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900">Explorer</h4>
+                        <ul className="space-y-4">
+                            <li><Link href="/" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Accueil</Link></li>
+                            <li><Link href="/prestations" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Prestations</Link></li>
+                            <li><Link href="/studio" className="text-[13px] text-stone-500 hover:text-accent transition-colors">À Propos</Link></li>
+                            <li><Link href="/galerie" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Galerie</Link></li>
+                            <li><Link href="/avis" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Avis Clients</Link></li>
+                        </ul>
+                    </div>
+
+                    {/* Column 3: Legal & Admin */}
+                    <div className="space-y-8">
+                        <h4 className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900">Informations</h4>
+                        <ul className="space-y-4">
+                            <li><Link href="/mentions-legales" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Mentions Légales</Link></li>
+                            <li><Link href="/politique-de-confidentialite" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Confidentialité</Link></li>
+                            <li><Link href="/admin" className="text-[13px] text-stone-500 hover:text-accent transition-colors">Espace Pro</Link></li>
+                        </ul>
+                        <div className="pt-4 flex gap-4">
+                             {/* Fake App Store Badges style to match coredefemme */}
+                             <div className="h-8 w-24 bg-stone-900/5 rounded-md border border-stone-200 flex items-center justify-center text-[8px] font-bold text-stone-400">APP STORE</div>
+                             <div className="h-8 w-24 bg-stone-900/5 rounded-md border border-stone-200 flex items-center justify-center text-[8px] font-bold text-stone-400">PLAY STORE</div>
+                        </div>
+                    </div>
+
+                    {/* Column 4: Location */}
+                    <div className="space-y-8">
+                        <h4 className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900">Le Studio</h4>
+                        <div className="space-y-6">
+                            <div className="flex gap-4 items-start">
+                                <MapPin size={16} className="text-accent mt-0.5" />
+                                <p className="text-[13px] text-stone-500 leading-relaxed font-sans">
+                                    {settings.address || "La Chaux-de-Fonds, Suisse"}
+                                </p>
+                            </div>
+                            <div className="flex gap-4 items-start">
+                                <Mail size={16} className="text-accent mt-0.5" />
+                                <p className="text-[13px] text-stone-500 font-sans">
+                                    {settings.email || "hello@palmainstitut.ch"}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <div className="pt-12 border-t border-stone-200/50 flex flex-col md:flex-row items-center justify-between gap-6">
+                    <p className="text-[10px] uppercase tracking-widest text-stone-400 font-medium">
+                        &copy; {currentYear} {settings.studioName}. Tous droits réservés.
+                    </p>
+                    <p className="text-[10px] uppercase tracking-widest text-stone-400 font-medium">
+                        Fait avec passion par <a href="https://syntalys.ch" target="_blank" rel="noopener noreferrer" className="text-stone-600 hover:text-accent transition-colors font-bold">Syntalys</a>
+                    </p>
+                </div>
             </div>
         </footer>
     );
