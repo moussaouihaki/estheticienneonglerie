@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 export default function StudioPage() {
     return (
-        <div className="min-h-screen pt-32 md:pt-40">
+        <div className="min-h-screen pt-40 md:pt-56">
             {/* Header - Beige */}
             <div className="bg-background py-20 px-6 overflow-hidden">
                 <div className="max-w-7xl mx-auto text-center">

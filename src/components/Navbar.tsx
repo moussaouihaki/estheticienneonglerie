@@ -36,7 +36,7 @@ export function Navbar() {
     return (
         <nav
             className={cn(
-                "fixed top-0 left-0 right-0 z-[110] transition-all duration-700 h-32 md:h-40 flex items-center",
+                "fixed top-0 left-0 right-0 z-[110] transition-all duration-700 h-40 md:h-56 flex items-center",
                 isScrolled ? "bg-white/95 backdrop-blur-2xl border-b border-stone-100 shadow-sm" : "bg-transparent"
             )}
         >
@@ -48,7 +48,7 @@ export function Navbar() {
                         <img
                             src={settings.logo}
                             alt="Palma Institut"
-                            className="h-20 md:h-28 w-auto object-contain transition-all duration-700 group-hover:scale-105"
+                            className="h-32 md:h-44 w-auto object-contain transition-all duration-700 group-hover:scale-105"
                         />
                     </Link>
                 </div>

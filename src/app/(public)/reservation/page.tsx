@@ -34,7 +34,7 @@ export default function ReservationPage() {
     );
 
     return (
-        <div className="min-h-screen pt-32 md:pt-40 pb-20 bg-background overflow-hidden relative">
+        <div className="min-h-screen pt-40 md:pt-56 pb-20 bg-background overflow-hidden relative">
             
             {/* Header */}
             <div className="max-w-4xl mx-auto px-6 text-center mb-16">
