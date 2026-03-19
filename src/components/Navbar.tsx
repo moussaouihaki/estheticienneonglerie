@@ -59,7 +59,7 @@ export function Navbar() {
                         <Link
                             key={link.name}
                             href={link.href}
-                            className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900/70 hover:text-stone-900 hover:italic transition-all relative group"
+                            className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900/70 hover:text-stone-900 hover:italic transition-all relative group whitespace-nowrap"
                         >
                             {link.name}
                             <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent transition-all duration-500 group-hover:w-full" />
@@ -67,7 +67,7 @@ export function Navbar() {
                     ))}
                     <Link
                         href="/connexion"
-                        className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900/70 hover:text-stone-900 hover:italic transition-all relative group"
+                        className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900/70 hover:text-stone-900 hover:italic transition-all relative group whitespace-nowrap"
                     >
                         Connexion
                         <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent transition-all duration-500 group-hover:w-full" />
