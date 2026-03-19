@@ -19,7 +19,7 @@ export function FeaturedReviews() {
     if (approvedReviews.length === 0) return null;
 
     return (
-        <section className="py-24 bg-stone-50 overflow-hidden">
+        <section className="py-32 bg-background overflow-hidden">
             <div className="max-w-6xl mx-auto px-6">
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
                     <motion.div {...fadeUp(0)} className="max-w-xl">

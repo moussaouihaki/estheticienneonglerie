@@ -29,11 +29,18 @@ export default function CancelPage({ params }: { params: Promise<{ id: string }>
                     const data = docSnap.data();
                     setAppointment(data);
                     
-                    // Logic for 24h check
-                    const apptDate = new Date(`${data.date}T${data.time}`);
+                    // Robust Logic for 24h check
+                    const [year, month, day] = data.date.split("-").map(Number);
+                    const [hour, minute] = data.time.split(":").map(Number);
+                    
+                    const apptDate = new Date(year, month - 1, day, hour, minute);
                     const now = new Date();
+                    
                     const diffMs = apptDate.getTime() - now.getTime();
                     const diffHours = diffMs / (1000 * 60 * 60);
+
+                    console.log("Date RDV:", data.date, data.time);
+                    console.log("Calcul Dif (Heures):", diffHours);
                     
                     if (diffHours >= 24) {
                         setCanCancel(true);

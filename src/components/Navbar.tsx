@@ -13,10 +13,10 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const navLinks = [
-    { name: "Accueil",      href: "/" },
-    { name: "Prestations",  href: "/prestations" },
-    { name: "À Propos",     href: "/studio" },
-    { name: "Galerie",      href: "/galerie" },
+    { name: "Accueil", href: "/" },
+    { name: "Prestations", href: "/prestations" },
+    { name: "À Propos", href: "/studio" },
+    { name: "Galerie", href: "/galerie" },
     { name: "Avis Clients", href: "/avis" },
 ];
 
@@ -48,10 +48,10 @@ export function Navbar() {
                         <Link
                             key={link.name}
                             href={link.href}
-                            className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900 hover:italic hover:text-[#B08D57] transition-all relative group"
+                            className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900/70 hover:text-stone-900 hover:italic transition-all relative group"
                         >
                             {link.name}
-                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#B08D57] transition-all duration-500 group-hover:w-full" />
+                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent transition-all duration-500 group-hover:w-full" />
                         </Link>
                     ))}
                 </div>
@@ -62,37 +62,33 @@ export function Navbar() {
                         <img
                             src={settings.logo}
                             alt="Palma Institut"
-                            className="h-12 md:h-16 w-auto object-contain transition-all duration-700 group-hover:scale-105"
+                            className="h-10 md:h-14 w-auto object-contain transition-all duration-700 group-hover:scale-105"
                         />
                     </Link>
                 </div>
 
                 {/* Right Links & Action (Desktop) */}
-                <div className="hidden lg:flex items-center justify-end space-x-12 flex-1">
-                    {navLinks.slice(3, 5).map((link) => (
+                <div className="hidden lg:flex items-center justify-end space-x-10 flex-1">
+                    {navLinks.slice(3).map((link) => (
                         <Link
                             key={link.name}
                             href={link.href}
-                            className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900 hover:italic hover:text-[#B08D57] transition-all relative group"
+                            className="text-[10px] uppercase tracking-[0.4em] font-black text-stone-900/70 hover:text-stone-900 hover:italic transition-all relative group"
                         >
                             {link.name}
-                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-[#B08D57] transition-all duration-500 group-hover:w-full" />
+                            <span className="absolute -bottom-1 left-0 w-0 h-px bg-accent transition-all duration-500 group-hover:w-full" />
                         </Link>
                     ))}
-                    {settings.instagram && (
-                        <a 
-                            href={settings.instagram} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
-                            className="text-stone-900 hover:text-[#B08D57] transition-all duration-500 transform hover:scale-110"
-                            title="Suivez-nous sur Instagram"
-                        >
-                            <Instagram size={18} />
-                        </a>
-                    )}
+                    <div className="h-4 w-px bg-stone-200 mx-2" />
+                    <Link
+                        href="/login"
+                        className="text-[10px] uppercase tracking-[0.3em] font-black text-stone-900 hover:text-accent transition-all"
+                    >
+                        Connexion
+                    </Link>
                     <Link
                         href="/reservation"
-                        className="px-8 py-4 bg-stone-900 text-white text-[9px] font-black uppercase tracking-[0.3em] hover:bg-[#B08D57] transition-all duration-700 rounded-full shadow-2xl"
+                        className="px-8 py-4 bg-stone-900 text-white text-[9px] font-black uppercase tracking-[0.3em] hover:bg-stone-800 transition-all duration-700 rounded-full shadow-2xl"
                     >
                         Réserver
                     </Link>
