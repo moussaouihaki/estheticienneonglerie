@@ -9,9 +9,9 @@ export default function Hero() {
     const { settings } = useSiteSettings();
     
     return (
-        <section id="accueil" className="relative min-h-screen flex items-center overflow-hidden bg-background">
+        <section id="accueil" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-background pt-20 md:pt-24">
             {/* Background Image with Parallax-like overlay */}
-            <div className="absolute inset-0 z-0">
+            <div className="absolute inset-x-0 bottom-0 top-20 md:top-24 z-0">
                 <img 
                     src="/images/hero.png" 
                     alt="Palma Institut Studio" 
